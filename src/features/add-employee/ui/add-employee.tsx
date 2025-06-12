@@ -34,11 +34,11 @@ export function AddEmployee() {
   const form = useForm<z.infer<typeof addEmployeeSchema>>({
     resolver: zodResolver(addEmployeeSchema),
     defaultValues: {
-      firstName: "",
-      lastName: "",
-      email: "",
-      department: "",
-      position: "",
+      firstName: "Luong Quy",
+      lastName: "Tan",
+      email: "tanquyluong@gmail.com",
+      department: "IT",
+      position: "FE Developer",
     },
   });
   const { handleSubmit, reset, control } = form;

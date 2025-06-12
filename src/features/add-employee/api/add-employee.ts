@@ -1,13 +1,12 @@
-import { AddEmployeeData } from "@/entities/employee";
+import { AddEmployeeData, Employee } from "@/entities/employee";
+import { apiClient } from "@/shared/api";
 
 export const addEmployeeApi = async (
   data: AddEmployeeData
-): Promise<AddEmployeeData> => {
-  await new Promise((resolve) => setTimeout(resolve, 1000));
+): Promise<Employee> => {
+  return await apiClient.post("/api/employees", data);
+};
 
-  const newEmployee: AddEmployeeData = {
-    ...data,
-  };
-
-  return newEmployee;
+export const getEmployeesApi = async (): Promise<Employee[]> => {
+  return await apiClient.get("/employees");
 };

@@ -1,5 +1,6 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { addEmployeeApi } from "../api/add-employee";
+import { toast } from "sonner";
 
 export function useAddEmployee() {
   const queryClient = useQueryClient();
@@ -14,7 +15,7 @@ export function useAddEmployee() {
       );
     },
     onError: (error) => {
-      console.error("Failed to create employee:", error);
+      toast.error(error.message);
     },
   });
 }
