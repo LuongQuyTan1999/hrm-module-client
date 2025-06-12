@@ -1,8 +1,8 @@
+import { Employee } from "@/entities/employee";
 import { Badge } from "@/shared/ui/badge";
 import { Button } from "@/shared/ui/button";
 import { Eye, Mail, Phone } from "lucide-react";
 import Link from "next/link";
-import { Employee } from "../model/constants";
 
 export function EmployeeGrid({
   filteredEmployees,

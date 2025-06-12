@@ -1,10 +1,9 @@
 "use client";
-import { Button } from "@/shared/ui/button";
-import { Plus } from "lucide-react";
+import { AddEmployee } from "@/features/add-employee";
 import { useState } from "react";
 import { employees } from "../model/constants";
-import { FiltersSearch } from "./filters-search";
 import { EmployeeGrid } from "./employee-grid";
+import { FiltersSearch } from "./filters-search";
 
 export function EmployeesPage() {
   const [searchTerm, setSearchTerm] = useState("");
@@ -32,10 +31,7 @@ export function EmployeesPage() {
             Manage your team members and view their profiles
           </p>
         </div>
-        <Button className="bg-blue-600 hover:bg-blue-700 px-6 h-10 text-white">
-          <Plus className="mr-2 w-4 h-4" />
-          Add Employee
-        </Button>
+        <AddEmployee />
       </div>
 
       <FiltersSearch

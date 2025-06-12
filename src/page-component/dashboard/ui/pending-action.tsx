@@ -1,8 +1,8 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/shared/ui/card";
-import { dashboardData } from "../model/constants";
 import { Badge } from "@/shared/ui/badge";
 import { Button } from "@/shared/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/shared/ui/card";
 import { Eye } from "lucide-react";
+import { dashboardData } from "../model/constants";
 
 export function PendingAction() {
   const getPriorityColor = (priority: string) => {

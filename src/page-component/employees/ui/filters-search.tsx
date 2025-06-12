@@ -1,6 +1,6 @@
+import { Employee } from "@/entities/employee";
 import { Button } from "@/shared/ui/button";
 import { ChevronDown, Filter, Search } from "lucide-react";
-import { Employee } from "../model/constants";
 
 export function FiltersSearch({
   searchTerm,

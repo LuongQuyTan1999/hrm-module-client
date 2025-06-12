@@ -1,6 +1,4 @@
-import { Button } from "@/shared/ui/button";
-import { Plus } from "lucide-react";
-
+import { AddEmployee } from "@/features/add-employee";
 import { DepartmentGrowth } from "./department-growth";
 import { KeyMetrics } from "./key-metrics";
 import { PendingAction } from "./pending-action";
@@ -21,12 +19,8 @@ export function DashboardPage() {
             Welcome back! Here's your organization overview
           </p>
         </div>
-        <div className="flex items-center gap-3">
-          <Button className="bg-blue-600 hover:bg-blue-700 h-10 text-white">
-            <Plus className="mr-2 w-4 h-4" />
-            Add Employee
-          </Button>
-        </div>
+
+        <AddEmployee />
       </div>
 
       <KeyMetrics />

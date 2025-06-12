@@ -1,16 +1,4 @@
-export type Employee = {
-  id: number;
-  name: string;
-  email: string;
-  phone: string;
-  role: string;
-  department: string;
-  location: string;
-  status: "Active" | "On Leave" | "Inactive";
-  avatar: string | React.ReactNode;
-  avatarBg?: string;
-  hasNotification?: boolean;
-};
+import { Employee } from "@/entities/employee";
 
 export const employees: Employee[] = [
   {

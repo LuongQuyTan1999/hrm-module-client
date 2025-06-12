@@ -1,5 +1,6 @@
+import { Badge } from "@/shared/ui/badge";
+import { Button } from "@/shared/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/shared/ui/card";
-import { dashboardData } from "../model/constants";
 import {
   Award,
   Calendar,
@@ -8,8 +9,7 @@ import {
   UserPlus,
   Users,
 } from "lucide-react";
-import { Button } from "@/shared/ui/button";
-import { Badge } from "@/shared/ui/badge";
+import { dashboardData } from "../model/constants";
 
 export function RecentActivity() {
   const getActivityIcon = (type: string) => {
