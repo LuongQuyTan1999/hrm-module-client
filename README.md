@@ -1,36 +1,115 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Airdrop Checking Project
+
+## Project Structure
+
+This project follows Feature Slices Design (FSD) architecture pattern for better code organization and maintainability.
+
+```
+src/
+├── app/          # Application initialization, providers
+├── pages/        # Page components and routing
+├── widgets/      # Complex reusable components (e.g. Header)
+├── features/     # Business features
+├── entities/     # Business entities
+└── shared/       # Shared utilities and components
+    ├── api/      # API related code
+    ├── ui/       # Shared UI components
+    ├── lib/      # Utility functions
+    └── config/   # Configurations
+```
+
+## Layer Dependencies
+
+Dependencies should only go from top to bottom:
+
+```
+app → pages → widgets → features → entities → shared
+```
+
+## Component Structure Example
+
+```
+feature/
+├── api/          # API calls
+├── model/        # Business logic
+├── ui/          # Components
+├── lib/         # Feature specific utilities
+├── types.ts     # TypeScript types
+└── index.ts     # Public API exports
+```
+
+## Code Style & Conventions
+
+### Imports
+
+```typescript
+// Direct imports for better tree-shaking
+import { Button } from "@/shared/ui/button";
+import { formatAddress } from "@/shared/lib/format-address";
+```
+
+### Component Exports
+
+```typescript
+// Use named exports
+export { Button } from "./Button";
+export type { ButtonProps } from "./types";
+```
+
+### File Naming
+
+- React Components: `PascalCase.tsx`
+- Utilities: `kebab-case.ts`
+- Types: `PascalCase.types.ts`
 
 ## Getting Started
 
-First, run the development server:
+1. Install dependencies:
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+yarn install
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+2. Run development server:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```bash
+yarn dev
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+3. Build for production:
 
-## Learn More
+```bash
+yarn build
+```
 
-To learn more about Next.js, take a look at the following resources:
+## Key Technologies
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- Next.js 14
+- TypeScript
+- Tailwind CSS
+- Wagmi
+- Shadcn/ui
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Best Practices
 
-## Deploy on Vercel
+1. **Public API Pattern**
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+   - Always export through `index.ts`
+   - Only expose what's necessary
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+2. **Component Organization**
+
+   - Keep components small and focused
+   - Use composition over inheritance
+   - Separate business logic from UI
+
+3. **Styling**
+
+   - Use Tailwind CSS utilities
+   - Follow BEM-like naming for custom classes
+   - Use CSS variables for theming
+
+4. **State Management**
+   - Use React Query for server state
+   - Use React Context for global UI state
+   - Keep component state local when possible
