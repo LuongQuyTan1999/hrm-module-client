@@ -1,4 +1,5 @@
 "use client";
+import { employeeNotifications } from "@/entities/employee";
 import { Button } from "@/shared/ui/button";
 import {
   Dialog,
@@ -30,6 +31,7 @@ import { useAddEmployee } from "../model/store";
 export function AddEmployee() {
   const [open, setOpen] = useState(false);
   const { mutate: addEmployee, isPending } = useAddEmployee();
+  // const { data: employees } = useGetEmployees();
 
   const form = useForm<z.infer<typeof addEmployeeSchema>>({
     resolver: zodResolver(addEmployeeSchema),
@@ -43,8 +45,15 @@ export function AddEmployee() {
   });
   const { handleSubmit, reset, control } = form;
 
-  const onSubmit = async (data: z.infer<typeof addEmployeeSchema>) => {
-    await addEmployee(data);
+  const onSubmit = (data: z.infer<typeof addEmployeeSchema>) => {
+    addEmployee(data, {
+      onSuccess: () => {
+        employeeNotifications.addSuccess();
+      },
+      onError: (error) => {
+        employeeNotifications.addError(error?.message);
+      },
+    });
     reset();
   };
 

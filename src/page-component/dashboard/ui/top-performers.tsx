@@ -2,7 +2,7 @@ import { Button } from "@/shared/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/shared/ui/card";
 import { ArrowRight, Award } from "lucide-react";
 import Link from "next/link";
-import { dashboardData } from "../model/constants";
+import { dashboardData } from "../model/mock-data";
 
 export function TopPerformers() {
   return (

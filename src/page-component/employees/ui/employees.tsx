@@ -1,7 +1,7 @@
 "use client";
 import { AddEmployee } from "@/features/add-employee";
 import { useState } from "react";
-import { employees } from "../model/constants";
+import { employees } from "../model/mock-data";
 import { EmployeeGrid } from "./employee-grid";
 import { FiltersSearch } from "./filters-search";
 

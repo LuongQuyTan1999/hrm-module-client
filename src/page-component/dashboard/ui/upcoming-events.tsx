@@ -2,7 +2,7 @@ import { Badge } from "@/shared/ui/badge";
 import { Button } from "@/shared/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/shared/ui/card";
 import { Cake, Gift, Mail, MessageSquare } from "lucide-react";
-import { dashboardData } from "../model/constants";
+import { dashboardData } from "../model/mock-data";
 
 export function UpcomingEvents() {
   return (

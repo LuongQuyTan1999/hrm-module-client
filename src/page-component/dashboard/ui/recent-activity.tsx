@@ -9,7 +9,7 @@ import {
   UserPlus,
   Users,
 } from "lucide-react";
-import { dashboardData } from "../model/constants";
+import { dashboardData } from "../model/mock-data";
 
 export function RecentActivity() {
   const getActivityIcon = (type: string) => {

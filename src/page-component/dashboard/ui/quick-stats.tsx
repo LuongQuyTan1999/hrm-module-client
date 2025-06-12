@@ -1,6 +1,6 @@
 import { Card, CardContent } from "@/shared/ui/card";
 import { AlertCircle, Award, Cake, Clock, Gift, UserPlus } from "lucide-react";
-import { dashboardData } from "../model/constants";
+import { dashboardData } from "../model/mock-data";
 
 export function QuickStats() {
   return (

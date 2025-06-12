@@ -1,6 +1,7 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { addEmployeeApi } from "../api/add-employee";
-import { toast } from "sonner";
+import { employeeQueries } from "@/entities/employee";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { addEmployeeApi, getEmployeesApi } from "../api/add-employee";
+import { EmployeeFilters } from "./types";
 
 export function useAddEmployee() {
   const queryClient = useQueryClient();
@@ -8,14 +9,23 @@ export function useAddEmployee() {
   return useMutation({
     mutationFn: addEmployeeApi,
     onSuccess: (newEmployee) => {
-      queryClient.invalidateQueries({ queryKey: ["employees"] });
+      queryClient.invalidateQueries({
+        queryKey: employeeQueries.all(),
+      });
 
-      queryClient.setQueryData(["employees"], (oldData: any) =>
+      queryClient.setQueryData(employeeQueries.list(), (oldData: any) =>
         oldData ? [...oldData, newEmployee] : [newEmployee]
       );
     },
     onError: (error) => {
-      toast.error(error.message);
+      console.error("Error adding employee:", error);
     },
+  });
+}
+
+export function useGetEmployees(filters: EmployeeFilters) {
+  return useQuery({
+    queryKey: employeeQueries.list(filters),
+    queryFn: () => getEmployeesApi(filters),
   });
 }

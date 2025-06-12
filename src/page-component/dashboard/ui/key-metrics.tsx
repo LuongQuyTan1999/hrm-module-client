@@ -1,6 +1,6 @@
 import { Card, CardContent } from "@/shared/ui/card";
 import { BarChart3, Building2, UserPlus, Users } from "lucide-react";
-import { dashboardData } from "../model/constants";
+import { dashboardData } from "../model/mock-data";
 
 export function KeyMetrics() {
   return (
