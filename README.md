@@ -7,7 +7,7 @@ This project follows Feature Slices Design (FSD) architecture pattern for better
 ```
 src/
 ├── app/          # Application initialization, providers
-├── pages/        # Page components and routing
+├── page-component/        # Page components and routing
 ├── widgets/      # Complex reusable components (e.g. Header)
 ├── features/     # Business features
 ├── entities/     # Business entities
@@ -23,7 +23,7 @@ src/
 Dependencies should only go from top to bottom:
 
 ```
-app → pages → widgets → features → entities → shared
+app → page-component → widgets → features → entities → shared
 ```
 
 ## Component Structure Example
