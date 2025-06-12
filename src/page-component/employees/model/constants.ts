@@ -1,0 +1,113 @@
+export type Employee = {
+  id: number;
+  name: string;
+  email: string;
+  phone: string;
+  role: string;
+  department: string;
+  location: string;
+  status: "Active" | "On Leave" | "Inactive";
+  avatar: string | React.ReactNode;
+  avatarBg?: string;
+  hasNotification?: boolean;
+};
+
+export const employees: Employee[] = [
+  {
+    id: 1,
+    name: "Sarah Johnson",
+    email: "sarah.johnson@company.com",
+    phone: "+1 (555) 123-4567",
+    role: "Product Manager",
+    department: "Product",
+    location: "San Francisco, CA",
+    status: "Active",
+    avatar: "SJ",
+    avatarBg: "bg-blue-600",
+  },
+  {
+    id: 2,
+    name: "Michael Chen",
+    email: "michael.chen@company.com",
+    phone: "+1 (555) 234-5678",
+    role: "Senior Developer",
+    department: "Engineering",
+    location: "New York, NY",
+    status: "Active",
+    avatar:
+      "https://images.unsplash.com/photo-1519244703995-f4e0f30006d5?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
+  },
+  {
+    id: 3,
+    name: "Emily Davis",
+    email: "emily.davis@company.com",
+    phone: "+1 (555) 345-6789",
+    role: "UX Designer",
+    department: "Design",
+    location: "Austin, TX",
+    status: "Active",
+    avatar:
+      "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
+    hasNotification: true,
+  },
+  {
+    id: 4,
+    name: "David Wilson",
+    email: "david.wilson@company.com",
+    phone: "+1 (555) 456-7890",
+    role: "Marketing Director",
+    department: "Marketing",
+    location: "Chicago, IL",
+    status: "On Leave",
+    avatar:
+      "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
+  },
+  {
+    id: 5,
+    name: "Lisa Anderson",
+    email: "lisa.anderson@company.com",
+    phone: "+1 (555) 567-8901",
+    role: "HR Specialist",
+    department: "Human Resources",
+    location: "Seattle, WA",
+    status: "Active",
+    avatar:
+      "https://images.unsplash.com/photo-1517841905240-472988babdf9?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
+  },
+  {
+    id: 6,
+    name: "Robert Brown",
+    email: "robert.brown@company.com",
+    phone: "+1 (555) 678-9012",
+    role: "Sales Manager",
+    department: "Sales",
+    location: "Miami, FL",
+    status: "Active",
+    avatar: "RB",
+    avatarBg: "bg-green-600",
+  },
+  {
+    id: 7,
+    name: "Jennifer Miller",
+    email: "jennifer.miller@company.com",
+    phone: "+1 (555) 789-0123",
+    role: "Finance Analyst",
+    department: "Finance",
+    location: "Boston, MA",
+    status: "Active",
+    avatar:
+      "https://images.unsplash.com/photo-1494790108755-2616b612b5bc?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
+  },
+  {
+    id: 8,
+    name: "Christopher Lee",
+    email: "christopher.lee@company.com",
+    phone: "+1 (555) 890-1234",
+    role: "DevOps Engineer",
+    department: "Engineering",
+    location: "Denver, CO",
+    status: "Active",
+    avatar: "CL",
+    avatarBg: "bg-purple-600",
+  },
+];
