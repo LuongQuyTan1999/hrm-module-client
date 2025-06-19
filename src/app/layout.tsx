@@ -1,8 +1,9 @@
+import { AuthGuard } from "@/features/auth-guard";
+import { Toaster } from "@/shared/ui/sonner";
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { Providers } from "./providers";
-import { Toaster } from "@/shared/ui/sonner";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -30,7 +31,7 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <Providers>
-          {children}
+          <AuthGuard>{children}</AuthGuard>
           <Toaster position="top-center" />
         </Providers>
       </body>

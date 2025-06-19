@@ -7,13 +7,14 @@ export default defineConfig([
   {
     files: ["src/**/*.{ts,tsx}"],
     rules: {
-      "fsd/insignificant-slice": "warn",
+      "fsd/insignificant-slice": "off",
     },
   },
   {
     files: ["src/shared/**/*.{ts,tsx}"],
     rules: {
       "fsd/segments-by-purpose": "off",
+      "fsd/public-api": "off",
     },
   },
 ]);

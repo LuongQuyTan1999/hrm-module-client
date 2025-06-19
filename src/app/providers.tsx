@@ -7,6 +7,8 @@ export const Providers = ({ children }: { children: React.ReactNode }) => {
       queries: {
         retry: false,
         refetchOnWindowFocus: false,
+        staleTime: 60 * 1000,
+        gcTime: 10 * 60 * 1000,
       },
     },
   });

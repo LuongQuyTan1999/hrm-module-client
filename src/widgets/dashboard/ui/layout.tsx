@@ -7,6 +7,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import React, { useState } from "react";
 import { mainMenuItems, moreToolsItems } from "../model";
+import { useAuth } from "@/entities/auth";
 
 interface HRMLayoutProps {
   children: React.ReactNode;
@@ -15,6 +16,7 @@ interface HRMLayoutProps {
 export function HRMLayout({ children }: HRMLayoutProps) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const pathname = usePathname();
+  const { user } = useAuth();
 
   const isActiveLink = (href: string) => {
     if (href === "/dashboard") {
@@ -187,8 +189,10 @@ export function HRMLayout({ children }: HRMLayoutProps) {
                 className="border border-gray-300 rounded-full w-8 h-8"
               />
               <div className="hidden md:block">
-                <p className="font-medium text-gray-900 text-sm">John Doe</p>
-                <p className="text-gray-500 text-xs">HR Manager</p>
+                <p className="font-medium text-gray-900 text-sm">
+                  {user?.name}
+                </p>
+                <p className="text-gray-500 text-xs uppercase">{user?.role}</p>
               </div>
             </div>
           </div>

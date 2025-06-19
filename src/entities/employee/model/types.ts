@@ -19,3 +19,11 @@ export interface AddEmployeeData {
   department: string;
   position: string;
 }
+
+export interface EmployeeFilters {
+  search?: string;
+  department?: string;
+  role?: string;
+  page?: number;
+  limit?: number;
+}

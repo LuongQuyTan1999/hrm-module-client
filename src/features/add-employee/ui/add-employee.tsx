@@ -1,5 +1,5 @@
 "use client";
-import { employeeNotifications } from "@/entities/employee";
+import { employeeNotifications, useAddEmployee } from "@/entities/employee";
 import { Button } from "@/shared/ui/button";
 import {
   Dialog,
@@ -26,12 +26,10 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { addEmployeeSchema } from "../model/schema";
-import { useAddEmployee } from "../model/store";
 
 export function AddEmployee() {
   const [open, setOpen] = useState(false);
   const { mutate: addEmployee, isPending } = useAddEmployee();
-  // const { data: employees } = useGetEmployees();
 
   const form = useForm<z.infer<typeof addEmployeeSchema>>({
     resolver: zodResolver(addEmployeeSchema),

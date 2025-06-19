@@ -1,5 +1,5 @@
-// src/shared/api/client.ts
 import axios from "axios";
+import { AuthStorage } from "../lib/auth-storage";
 import { Storage } from "../lib/storage";
 
 export const apiClient = axios.create({
@@ -13,7 +13,7 @@ export const apiClient = axios.create({
 // Request interceptor - add auth token
 apiClient.interceptors.request.use(
   (config) => {
-    const token = Storage.getItem("authToken");
+    const token = AuthStorage.getAccessToken();
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
@@ -26,10 +26,41 @@ apiClient.interceptors.request.use(
 apiClient.interceptors.response.use(
   (response) => response.data,
   (error) => {
-    if (error.response?.status === 401) {
-      // Redirect to login
-      window.location.href = "/login";
+    // Handle network errors
+    if (!error.response) {
+      console.error("Network error:", error.message);
+      return Promise.reject({
+        message: "Network error. Please check your connection.",
+        error: "NetworkError",
+        statusCode: 0,
+      });
     }
-    return Promise.reject(error);
+
+    const { status, data } = error.response;
+
+    switch (status) {
+      case 401:
+        // Unauthorized - clear storage and redirect to login
+        Storage.clear();
+        console.error("Unauthorized access");
+        break;
+      case 403:
+        console.error("Forbidden access");
+        break;
+      case 404:
+        console.error("Resource not found");
+        break;
+      case 500:
+        console.error("Internal server error");
+        break;
+      default:
+        console.error(`HTTP error ${status}:`, data?.message || error.message);
+    }
+
+    return Promise.reject({
+      message: data?.message || error.message,
+      error: data?.error || "UnknownError",
+      statusCode: status,
+    });
   }
 );
