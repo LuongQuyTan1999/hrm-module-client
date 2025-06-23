@@ -1,5 +1,6 @@
 "use client";
 
+import { useAuth } from "@/entities/auth";
 import { cn } from "@/shared/lib/tailwind-merge";
 import { Button } from "@/shared/ui/button";
 import { Bell, HelpCircle, Home, Menu, Search, Users, X } from "lucide-react";
@@ -7,7 +8,6 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import React, { useState } from "react";
 import { mainMenuItems, moreToolsItems } from "../model";
-import { useAuth } from "@/entities/auth";
 
 interface HRMLayoutProps {
   children: React.ReactNode;
@@ -16,7 +16,11 @@ interface HRMLayoutProps {
 export function HRMLayout({ children }: HRMLayoutProps) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const pathname = usePathname();
-  const { user } = useAuth();
+  const { user, isLoading, isInitialized, isAuthenticated } = useAuth();
+
+  if (!isInitialized || !isAuthenticated || isLoading) {
+    return children;
+  }
 
   const isActiveLink = (href: string) => {
     if (href === "/dashboard") {

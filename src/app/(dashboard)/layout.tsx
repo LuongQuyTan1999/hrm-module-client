@@ -1,4 +1,4 @@
-import { HRMLayout } from "@/widgets/dashboard";
+import { HRMLayout } from "@/widgets/layout";
 
 export default function DashboardLayout({
   children,

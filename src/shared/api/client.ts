@@ -42,6 +42,7 @@ apiClient.interceptors.response.use(
       case 401:
         // Unauthorized - clear storage and redirect to login
         Storage.clear();
+        window.location.href = "/login";
         console.error("Unauthorized access");
         break;
       case 403:
