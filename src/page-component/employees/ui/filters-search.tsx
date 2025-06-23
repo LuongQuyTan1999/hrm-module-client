@@ -19,7 +19,7 @@ export function FiltersSearch({
 }) {
   const departments = [
     "All Departments",
-    ...Array.from(new Set(employees.map((emp) => emp.department))),
+    ...Array.from(new Set(employees.map((emp) => emp.departmentId))),
   ];
 
   return (

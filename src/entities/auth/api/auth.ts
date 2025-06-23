@@ -1,5 +1,5 @@
 import { apiClient } from "@/shared/api";
-import type { AuthTokens, LoginCredentials, User } from "@/shared/types/auth";
+import type { AuthTokens, LoginCredentials, User } from "@/shared/types";
 
 export const authApi = {
   login: async (

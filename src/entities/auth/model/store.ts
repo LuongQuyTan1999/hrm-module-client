@@ -1,5 +1,5 @@
 import { AuthStorage } from "@/shared/lib/auth-storage";
-import type { AuthTokens, User } from "@/shared/types/auth";
+import type { AuthTokens, User } from "@/shared/types";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 

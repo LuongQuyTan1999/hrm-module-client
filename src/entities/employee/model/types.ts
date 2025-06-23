@@ -1,23 +1,45 @@
 export interface Employee {
-  id: number;
-  name: string;
+  id: string;
+  firstName: string;
+  lastName: string;
   email: string;
-  phone: string;
-  role: string;
-  department: string;
-  location: string;
-  status: "Active" | "On Leave" | "Inactive";
-  avatar: string | React.ReactNode;
-  avatarBg?: string;
-  hasNotification?: boolean;
+  departmentId: string;
+  positionId: string;
+  dateOfBirth: Date;
+  gender: string;
+  address: string;
+  phoneNumber: string;
+  hireDate: Date;
+  contractType: string;
+  contractStart: Date;
+  contractEnd: Date;
+  bankAccount: string;
+  bankName: string;
+  taxCode: string;
+  status: "Active" | "Inactive";
 }
 
 export interface AddEmployeeData {
   firstName: string;
   lastName: string;
   email: string;
-  department: string;
-  position: string;
+  departmentId: string;
+  positionId: string;
+  dateOfBirth: Date;
+  gender: string;
+  address: string;
+  phoneNumber: string;
+  hireDate: Date;
+  contractType: string;
+  contractStart: Date;
+  contractEnd: Date;
+  bankAccount: string;
+  bankName: string;
+  taxCode: string;
+}
+
+export interface UpdateEmployeeData extends Partial<AddEmployeeData> {
+  id: string;
 }
 
 export interface EmployeeFilters {
