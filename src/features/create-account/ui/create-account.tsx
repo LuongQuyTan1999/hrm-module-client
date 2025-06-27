@@ -1,6 +1,5 @@
 "use client";
 import { useGetEmployee } from "@/entities/employee";
-import { Button } from "@/shared/ui/button";
 import {
   Dialog,
   DialogContent,

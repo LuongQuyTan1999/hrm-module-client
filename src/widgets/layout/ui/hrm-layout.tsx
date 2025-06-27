@@ -3,7 +3,7 @@
 import { useAuth } from "@/entities/auth";
 import { cn } from "@/shared/lib/tailwind-merge";
 import { Button } from "@/shared/ui/button";
-import { Bell, HelpCircle, Home, Menu, Search, Users, X } from "lucide-react";
+import { Bell, HelpCircle, Search, Users, X } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import React, { useState } from "react";
@@ -140,26 +140,7 @@ export function HRMLayout({ children }: HRMLayoutProps) {
       {/* Main content area */}
       <div className="lg:pl-72">
         {/* Top header - Clean and minimal */}
-        <header className="top-0 z-30 sticky flex justify-between items-center bg-white px-6 border-gray-200 border-b h-16">
-          <div className="flex items-center gap-4">
-            {/* Mobile menu button */}
-            <Button
-              variant="ghost"
-              size="icon"
-              className="lg:hidden"
-              onClick={() => setSidebarOpen(true)}
-            >
-              <Menu className="w-5 h-5" />
-            </Button>
-
-            {/* Breadcrumb - Simple and readable */}
-            <div className="flex items-center gap-2 text-gray-600 text-sm">
-              <Home className="w-4 h-4" />
-              <span>/</span>
-              <span className="font-medium text-gray-900">Team Directory</span>
-            </div>
-          </div>
-
+        <header className="top-0 z-30 sticky flex justify-end items-center bg-white px-6 border-gray-200 border-b h-16">
           {/* Header actions */}
           <div className="flex items-center gap-4">
             {/* Search - Large and accessible */}

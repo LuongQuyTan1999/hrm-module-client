@@ -340,7 +340,7 @@ export function CreateAccountForm({
               <Button
                 type="submit"
                 // disabled={isPending}
-                className="bg-green-600 hover:bg-green-700 text-white"
+                className="bg-blue-600 hover:bg-blue-700 text-white"
               >
                 <Save className="mr-2 w-4 h-4" />
                 Create Account

@@ -7,9 +7,11 @@ import {
   Dialog,
   DialogContent,
   DialogHeader,
+  DialogTitle,
   DialogTrigger,
 } from "@/shared/ui/dialog";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 import { Plus, UserPlus } from "lucide-react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
@@ -69,18 +71,21 @@ export function AddEmployee() {
         </Button>
       </DialogTrigger>
 
-      <DialogContent className="p-0 w-full sm:max-w-[900px] gap-0">
+      <DialogContent className="gap-0 p-0 w-full sm:max-w-[900px]">
+        <VisuallyHidden asChild>
+          <DialogTitle>Add Employee</DialogTitle>
+        </VisuallyHidden>
         <DialogHeader>
-          <div className="flex items-center justify-between p-6 border-b border-gray-200">
+          <div className="flex justify-between items-center p-6 border-gray-200 border-b">
             <div className="flex items-center gap-3">
-              <div className="h-10 w-10 bg-blue-100 rounded-lg flex items-center justify-center">
-                <UserPlus className="h-5 w-5 text-blue-600" />
+              <div className="flex justify-center items-center bg-blue-100 rounded-lg w-10 h-10">
+                <UserPlus className="w-5 h-5 text-blue-600" />
               </div>
               <div>
-                <h2 className="text-xl font-semibold text-gray-900">
+                <h2 className="font-semibold text-gray-900 text-xl">
                   Add New Employee
                 </h2>
-                <p className="text-sm text-gray-600">
+                <p className="text-gray-600 text-sm">
                   Step {currentStep} of 3 - Complete employee information
                 </p>
               </div>
@@ -89,14 +94,14 @@ export function AddEmployee() {
         </DialogHeader>
 
         {/* Progress Bar */}
-        <div className="px-6 py-4 border-b border-gray-200">
-          <div className="flex items-center justify-between mb-2">
-            <span className="text-sm font-medium text-gray-600">Progress</span>
-            <span className="text-sm text-gray-600">{currentStep}/3</span>
+        <div className="px-6 py-4 border-gray-200 border-b">
+          <div className="flex justify-between items-center mb-2">
+            <span className="font-medium text-gray-600 text-sm">Progress</span>
+            <span className="text-gray-600 text-sm">{currentStep}/3</span>
           </div>
-          <div className="w-full bg-gray-200 rounded-full h-2">
+          <div className="bg-gray-200 rounded-full w-full h-2">
             <div
-              className="bg-blue-600 h-2 rounded-full transition-all duration-300"
+              className="bg-blue-600 rounded-full h-2 transition-all duration-300"
               style={{ width: `${(currentStep / 3) * 100}%` }}
             ></div>
           </div>
