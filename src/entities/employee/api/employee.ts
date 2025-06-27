@@ -16,6 +16,10 @@ export const employeeApi = {
     });
   },
 
+  get: async (id: string): Promise<Employee> => {
+    return await apiClient.get(`/employees/${id}`);
+  },
+
   update: async (data: UpdateEmployeeData): Promise<Employee> => {
     const { id, ...updateData } = data;
     return await apiClient.put(`/employees/${id}`, updateData);

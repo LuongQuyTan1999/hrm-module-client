@@ -47,7 +47,7 @@ export function useDeleteEmployee() {
     mutationFn: employeeApi.delete,
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: employeeQueries.all(),
+        queryKey: employeeQueries.lists(),
       });
     },
   });
@@ -63,6 +63,18 @@ export function useGetEmployees(
   return useQuery({
     queryKey: employeeQueries.list(filters),
     queryFn: () => employeeApi.getAll(filters),
+    ...options,
+  });
+}
+
+export function useGetEmployee(
+  id: string,
+  options?: Omit<UseQueryOptions<Employee, Error>, "queryKey" | "queryFn">
+) {
+  return useQuery({
+    queryKey: employeeQueries.detail(id),
+    queryFn: () => employeeApi.get(id),
+    enabled: !!id,
     ...options,
   });
 }

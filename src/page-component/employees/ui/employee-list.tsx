@@ -12,20 +12,13 @@ import {
   useReactTable,
   VisibilityState,
 } from "@tanstack/react-table";
-import { ArrowUpDown, MoreHorizontal } from "lucide-react";
+import { CheckCircle, Edit, Eye, Shield, Trash2, UserPlus } from "lucide-react";
 import * as React from "react";
 
-import { Employee } from "@/entities/employee";
+import { Employee, useDeleteEmployee } from "@/entities/employee";
+import { Avatar, AvatarFallback, AvatarImage } from "@/shared/ui/avatar";
+import { Badge } from "@/shared/ui/badge";
 import { Button } from "@/shared/ui/button";
-import { Checkbox } from "@/shared/ui/checkbox";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/shared/ui/dropdown-menu";
 import {
   Table,
   TableBody,
@@ -34,119 +27,153 @@ import {
   TableHeader,
   TableRow,
 } from "@/shared/ui/table";
-import { cn } from "@/shared/lib/tailwind-merge";
-import { Avatar, AvatarFallback, AvatarImage } from "@/shared/ui/avatar";
+import Link from "next/link";
+import { CreateAccount } from "@/features/create-account";
 
-export const columns: ColumnDef<Employee>[] = [
-  {
-    id: "select",
-    header: ({ table }) => (
-      <Checkbox
-        checked={
-          table.getIsAllPageRowsSelected() ||
-          (table.getIsSomePageRowsSelected() && "indeterminate")
-        }
-        onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-        aria-label="Select all"
-      />
-    ),
-    cell: ({ row }) => (
-      <Checkbox
-        checked={row.getIsSelected()}
-        onCheckedChange={(value) => row.toggleSelected(!!value)}
-        aria-label="Select row"
-      />
-    ),
-    enableSorting: false,
-    enableHiding: false,
-  },
-  {
-    id: "avatar",
-    // header: "Avatar",
-    cell: () => (
-      <Avatar>
-        <AvatarImage src="https://github.com/shadcn.png" alt="@shadcn" />
-        <AvatarFallback>CN</AvatarFallback>
-      </Avatar>
-    ),
-  },
-  {
-    accessorKey: "email",
-    header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Email
-          <ArrowUpDown />
-        </Button>
-      );
+export const getColumns = (
+  deleteEmployee: (id: string) => void
+): ColumnDef<Employee>[] => {
+  return [
+    {
+      header: "Employee",
+      accessorKey: "firstName",
+      cell: ({ row }) => {
+        return (
+          <div className="flex items-center gap-2 capitalize">
+            <Avatar>
+              <AvatarImage src="https://github.com/shadcn.png" alt="@shadcn" />
+              <AvatarFallback>CN</AvatarFallback>
+            </Avatar>
+            <div className="flex flex-col">
+              <p className="font-medium text-gray-900">
+                {row.original.firstName} {row.original.lastName}
+              </p>
+              <p className="text-gray-500 text-sm">
+                ID: {row.original.employeeCode}
+              </p>
+            </div>
+          </div>
+        );
+      },
     },
-    cell: ({ row }) => <div className="lowercase">{row.getValue("email")}</div>,
-  },
-  {
-    accessorKey: "phoneNumber",
-    header: "Phone Number",
-  },
-  {
-    accessorKey: "address",
-    header: "Địa chỉ",
-  },
-  {
-    accessorKey: "role",
-    header: "Chức vụ",
-    cell: ({ row }) => (
-      <div className="capitalize">{row.getValue("role") || "Admin"}</div>
-    ),
-  },
-  {
-    accessorKey: "status",
-    header: "Status",
-    cell: ({ row }) => (
-      <div
-        className={cn(
-          "rounded-lg w-fit px-2 py-1 text-xs",
-          row.getValue("status") === "Active"
-            ? "bg-green-100 text-green-800 border-green-200"
-            : "bg-yellow-100 text-yellow-800 border-yellow-200"
-        )}
-      >
-        {row.getValue("status") || "Hoạt động"}
-      </div>
-    ),
-  },
-  {
-    id: "actions",
-    enableHiding: false,
-    cell: ({ row }) => {
-      const employee = row.original;
+    {
+      accessorKey: "department.name",
+      header: "Role & Department",
+      cell: ({ row }) => {
+        return (
+          <div className="">
+            <p className="font-medium text-gray-900">{"Product Manager"}</p>
+            <p className="text-gray-500 text-sm">
+              {row.original.department.name}
+            </p>
+          </div>
+        );
+      },
+    },
 
-      return (
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="h-8 w-8 p-0">
-              <span className="sr-only">Open menu</span>
-              <MoreHorizontal />
+    {
+      accessorKey: "email",
+      header: "Contact",
+      cell: ({ row }) => (
+        <div className="lowercase">
+          <p className="text-gray-900 text-sm">{row.original.email}</p>
+          <p className="text-gray-500 text-sm">{row.original.phoneNumber}</p>
+        </div>
+      ),
+    },
+    {
+      accessorKey: "address",
+      header: "Location",
+    },
+
+    {
+      accessorKey: "hireDate",
+      header: "Join Date",
+      cell: ({ row }) => (
+        <div className="capitalize">
+          <p className="text-gray-900 text-sm">
+            {new Date(row.getValue("hireDate")).toLocaleDateString()}
+          </p>
+        </div>
+      ),
+    },
+    {
+      accessorKey: "status",
+      header: "Status",
+      cell: ({ row }) => (
+        <div className="flex flex-col space-y-1">
+          <Badge
+            variant={
+              row.getValue("status") === "Active" ? "default" : "secondary"
+            }
+            className={
+              row.getValue("status") === "Active"
+                ? "bg-green-100 text-green-800 border-green-200"
+                : "bg-yellow-100 text-yellow-800 border-yellow-200"
+            }
+          >
+            {row.getValue("status") || "Active"}
+          </Badge>
+          {row.original.hasAccount ? (
+            <Badge className="bg-blue-100 border-blue-200 text-blue-800 text-xs">
+              <CheckCircle className="mr-1 w-3 h-3" />
+              Has Account
+            </Badge>
+          ) : (
+            <Badge variant="outline" className="border-gray-300 text-xs">
+              <Shield className="mr-1 w-3 h-3" />
+              No Account
+            </Badge>
+          )}
+        </div>
+      ),
+    },
+    {
+      id: "actions",
+      enableHiding: false,
+      cell: ({ row }) => {
+        const employee = row.original;
+
+        return (
+          <div className="flex items-center gap-2">
+            <Link href={`/employees/${employee.id}`}>
+              <Button variant="ghost" size="sm" title="View Profile">
+                <Eye className="w-4 h-4" />
+              </Button>
+            </Link>
+            <Button variant="ghost" size="sm" title="Edit Employee">
+              <Edit className="w-4 h-4" />
             </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuLabel>Actions</DropdownMenuLabel>
-            <DropdownMenuItem
-              onClick={() => navigator.clipboard.writeText(employee.id)}
+            {!employee.hasAccount && (
+              <CreateAccount employeeId={employee.id}>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  title="Create Account"
+                  className="hover:bg-green-50 text-green-600 hover:text-green-700"
+                >
+                  <UserPlus className="w-4 h-4" />
+                </Button>
+              </CreateAccount>
+            )}
+            <Button
+              variant="ghost"
+              size="sm"
+              title="Delete Employee"
+              className="hover:bg-red-50 text-red-600 hover:text-red-700"
+              onClick={() => deleteEmployee(employee.id)}
             >
-              Copy employee ID
-            </DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem>View employee details</DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      );
+              <Trash2 className="w-4 h-4" />
+            </Button>
+          </div>
+        );
+      },
     },
-  },
-];
+  ];
+};
 
 export function EmployeeList({ employees }: { employees?: Employee[] }) {
+  const { mutate: deleteEmployee } = useDeleteEmployee();
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
@@ -154,6 +181,8 @@ export function EmployeeList({ employees }: { employees?: Employee[] }) {
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({});
   const [rowSelection, setRowSelection] = React.useState({});
+
+  const columns = getColumns(deleteEmployee);
 
   const table = useReactTable({
     data: employees || [],
@@ -176,7 +205,7 @@ export function EmployeeList({ employees }: { employees?: Employee[] }) {
 
   return (
     <div className="w-full">
-      <div className="rounded-md border">
+      <div className="border rounded-md">
         <Table>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
@@ -226,8 +255,8 @@ export function EmployeeList({ employees }: { employees?: Employee[] }) {
           </TableBody>
         </Table>
       </div>
-      <div className="flex items-center justify-end space-x-2 py-4">
-        <div className="text-muted-foreground flex-1 text-sm">
+      <div className="flex justify-end items-center space-x-2 py-4">
+        <div className="flex-1 text-muted-foreground text-sm">
           {table.getFilteredSelectedRowModel().rows.length} of{" "}
           {table.getFilteredRowModel().rows.length} row(s) selected.
         </div>

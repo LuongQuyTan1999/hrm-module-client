@@ -1,10 +1,13 @@
+import { Department } from "@/entities/department/model/types";
+import { Position } from "@/entities/position/model/types";
+
 export interface Employee {
   id: string;
   firstName: string;
   lastName: string;
   email: string;
-  departmentId: string;
-  positionId: string;
+  department: Department;
+  position: Position;
   dateOfBirth: Date;
   gender: string;
   address: string;
@@ -16,6 +19,8 @@ export interface Employee {
   bankAccount: string;
   bankName: string;
   taxCode: string;
+  hasAccount: boolean;
+  employeeCode: string;
   status: "Active" | "Inactive";
 }
 

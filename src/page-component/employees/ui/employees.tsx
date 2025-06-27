@@ -1,18 +1,16 @@
 "use client";
+import { useGetEmployees } from "@/entities/employee";
 import { AddEmployee } from "@/features/add-employee";
 import { useState } from "react";
 import { employees } from "../model/mock-data";
 import { EmployeeGrid } from "./employee-grid";
-import { FiltersSearch } from "./filters-search";
-import { useGetEmployees } from "@/entities/employee";
-import { LayoutGrid, LayoutList, List } from "lucide-react";
-import { cn } from "@/shared/lib/tailwind-merge";
 import { EmployeeList } from "./employee-list";
+import { FiltersSearch } from "./filters-search";
 
 export function EmployeesPage() {
   const [searchTerm, setSearchTerm] = useState("");
   const [departmentFilter, setDepartmentFilter] = useState("All Departments");
-  const [viewMode, setViewMode] = useState("grid");
+  const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
 
   const filteredEmployees = employees.filter((employee) => {
     const matchesSearch = employee.email
@@ -20,7 +18,7 @@ export function EmployeesPage() {
       .includes(searchTerm.toLowerCase());
     const matchesDepartment =
       departmentFilter === "All Departments" ||
-      employee.departmentId === departmentFilter;
+      employee.department.id === departmentFilter;
     return matchesSearch && matchesDepartment;
   });
 
@@ -50,34 +48,9 @@ export function EmployeesPage() {
         setDepartmentFilter={setDepartmentFilter}
         employees={employees}
         filteredEmployees={filteredEmployees}
+        viewMode={viewMode}
+        setViewMode={setViewMode}
       />
-
-      <div className="flex items-center gap-2 justify-end mb-4">
-        <div className="flex items-center bg-gray-100 rounded-lg p-1">
-          <button
-            className={cn(
-              "p-2 rounded-md hover:bg-white hover:shadow-sm transition-colors cursor-pointer",
-              {
-                "bg-white shadow-sm": viewMode === "list",
-              }
-            )}
-            onClick={() => setViewMode("list")}
-          >
-            <LayoutList className="h-4 w-4 text-gray-600" />
-          </button>
-          <button
-            className={cn(
-              "p-2 rounded-md hover:bg-white hover:shadow-sm transition-colors cursor-pointer",
-              {
-                "bg-white shadow-sm": viewMode === "grid",
-              }
-            )}
-            onClick={() => setViewMode("grid")}
-          >
-            <LayoutGrid className="h-4 w-4 text-gray-600" />
-          </button>
-        </div>
-      </div>
 
       {viewMode === "list" ? (
         <EmployeeList employees={data?.items} />
