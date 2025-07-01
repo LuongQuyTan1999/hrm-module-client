@@ -6,6 +6,7 @@ import {
 import { UpdateDepartment } from "@/features/update-department";
 import { Button } from "@/shared/ui/button";
 import { Card, CardContent } from "@/shared/ui/card";
+import { ConfirmDialog } from "@/shared/ui/confirm-dialog";
 import {
   Building2,
   Calendar,
@@ -22,7 +23,8 @@ import {
 } from "lucide-react";
 
 export function DepartmentsTab({ activeTab }: { activeTab: string }) {
-  const { mutate: deleteDepartment } = useDeleteDepartment();
+  const { mutate: deleteDepartment, isPending: isDeleting } =
+    useDeleteDepartment();
 
   const { data, isLoading } = useGetDepartments(
     {},
@@ -31,10 +33,11 @@ export function DepartmentsTab({ activeTab }: { activeTab: string }) {
     }
   );
 
-  const handleDeleteDepartment = (id: string) => {
+  const handleDeleteDepartment = (id: string, callback?: () => void) => {
     deleteDepartment(id, {
       onSuccess: () => {
         departmentNotifications.deleteSuccess();
+        callback?.();
       },
       onError: (error) => {
         departmentNotifications.deleteError(error.message);
@@ -171,15 +174,26 @@ export function DepartmentsTab({ activeTab }: { activeTab: string }) {
                   >
                     <Mail className="w-4 h-4" />
                   </Button>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => handleDeleteDepartment(department.id)}
-                    className="hover:bg-red-50 text-red-600 hover:text-red-700"
+
+                  <ConfirmDialog
                     title="Delete Department"
+                    description={`Are you sure you want to delete <b>${department.name}</b>? This action cannot be undone and will affect all employees in this department.`}
+                    confirmText="Delete Department"
+                    cancelText="Cancel"
+                    variant="destructive"
+                    onConfirm={(callback) =>
+                      handleDeleteDepartment(department.id, callback)
+                    }
                   >
-                    <Trash2 className="w-4 h-4" />
-                  </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="hover:bg-red-50 disabled:opacity-50 text-red-600 hover:text-red-700"
+                      title="Delete Department"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </Button>
+                  </ConfirmDialog>
                 </div>
               </div>
             </CardContent>

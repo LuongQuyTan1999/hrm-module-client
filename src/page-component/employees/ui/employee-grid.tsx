@@ -1,7 +1,12 @@
-import { Employee, useDeleteEmployee } from "@/entities/employee";
+import {
+  Employee,
+  employeeNotifications,
+  useDeleteEmployee,
+} from "@/entities/employee";
 import { CreateAccount } from "@/features/create-account";
 import { Badge } from "@/shared/ui/badge";
 import { Button } from "@/shared/ui/button";
+import { ConfirmDialog } from "@/shared/ui/confirm-dialog";
 import {
   CheckCircle,
   Edit,
@@ -16,6 +21,18 @@ import Link from "next/link";
 
 export function EmployeeGrid({ employees }: { employees?: Employee[] }) {
   const { mutate: deleteEmployee } = useDeleteEmployee();
+
+  const handleDeleteEmployee = (id: string, callback?: () => void) => {
+    deleteEmployee(id, {
+      onSuccess: () => {
+        employeeNotifications.deleteSuccess();
+        callback?.();
+      },
+      onError: (error) => {
+        employeeNotifications.deleteError(error.message);
+      },
+    });
+  };
 
   return (
     <div className="gap-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
@@ -118,14 +135,28 @@ export function EmployeeGrid({ employees }: { employees?: Employee[] }) {
                 </CreateAccount>
               )}
 
-              <Button
-                variant="outline"
-                size="icon"
-                className="hover:bg-red-50 border-red-300 w-10 h-10 text-red-600 hover:text-red-700"
-                onClick={() => deleteEmployee(employee.id)}
+              <ConfirmDialog
+                title="Delete Employee"
+                description={`Are you sure you want to delete <b>${
+                  employee.firstName + " " + employee.lastName
+                }</b> with role <b style="text-transform: capitalize">${
+                  employee.user.role
+                }</b>?`}
+                confirmText="Delete Employee"
+                cancelText="Cancel"
+                variant="destructive"
+                onConfirm={(callback) =>
+                  handleDeleteEmployee(employee.id, callback)
+                }
               >
-                <Trash2 className="w-4 h-4" />
-              </Button>
+                <Button
+                  variant="outline"
+                  size="icon"
+                  className="hover:bg-red-50 border-red-300 w-10 h-10 text-red-600 hover:text-red-700"
+                >
+                  <Trash2 className="w-4 h-4" />
+                </Button>
+              </ConfirmDialog>
             </div>
           </div>
         </div>

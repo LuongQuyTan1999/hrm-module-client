@@ -34,9 +34,10 @@ import {
 } from "@/entities/position";
 import { UpdatePosition } from "@/features/update-position";
 import { departmentNotifications } from "@/entities/department";
+import { ConfirmDialog } from "@/shared/ui/confirm-dialog";
 
 export const getColumns = (
-  deletePosition: (id: string) => void
+  handleDeletePosition: (id: string, callback?: () => void) => void
 ): ColumnDef<any>[] => {
   return [
     {
@@ -148,15 +149,25 @@ export const getColumns = (
               </Button>
             </UpdatePosition>
 
-            <Button
-              variant="ghost"
-              size="sm"
+            <ConfirmDialog
               title="Delete Position"
-              className="hover:bg-red-50 text-red-600 hover:text-red-700"
-              onClick={() => deletePosition(position.id)}
+              description={`Are you sure you want to delete <b>${position.name}</b>? This action cannot be undone and will affect all employees in this position.`}
+              confirmText="Delete Position"
+              cancelText="Cancel"
+              variant="destructive"
+              onConfirm={(callback) =>
+                handleDeletePosition(position.id, callback)
+              }
             >
-              <Trash2 className="w-4 h-4" />
-            </Button>
+              <Button
+                variant="ghost"
+                size="sm"
+                title="Delete Position"
+                className="hover:bg-red-50 text-red-600 hover:text-red-700"
+              >
+                <Trash2 className="w-4 h-4" />
+              </Button>
+            </ConfirmDialog>
           </div>
         );
       },
@@ -177,17 +188,18 @@ export function PositionsTab({ activeTab }: { activeTab: string }) {
   );
   const positions = data?.items || [];
 
-  const handleDeletePosition = (id: string) => {
+  const handleDeletePosition = (id: string, callback?: () => void) => {
     deletePosition(id, {
       onSuccess: () => {
         departmentNotifications.deleteSuccess();
+        callback?.();
       },
       onError: (error) => {
         departmentNotifications.deleteError(error?.message);
       },
     });
   };
-  
+
   const columns = getColumns(handleDeletePosition);
 
   const table = useReactTable({

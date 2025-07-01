@@ -44,7 +44,7 @@ export function UpdatePosition({
   });
 
   const { handleSubmit, reset, control } = form;
-  console.log("UpdatePosition", position);
+
   useEffect(() => {
     if (open && position) {
       reset({

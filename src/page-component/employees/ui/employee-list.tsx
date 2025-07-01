@@ -15,7 +15,11 @@ import {
 import { CheckCircle, Edit, Eye, Shield, Trash2, UserPlus } from "lucide-react";
 import * as React from "react";
 
-import { Employee, useDeleteEmployee } from "@/entities/employee";
+import {
+  Employee,
+  employeeNotifications,
+  useDeleteEmployee,
+} from "@/entities/employee";
 import { Avatar, AvatarFallback, AvatarImage } from "@/shared/ui/avatar";
 import { Badge } from "@/shared/ui/badge";
 import { Button } from "@/shared/ui/button";
@@ -29,9 +33,10 @@ import {
 } from "@/shared/ui/table";
 import Link from "next/link";
 import { CreateAccount } from "@/features/create-account";
+import { ConfirmDialog } from "@/shared/ui/confirm-dialog";
 
 export const getColumns = (
-  deleteEmployee: (id: string) => void
+  handleDeleteEmployee: (id: string, callback?: () => void) => void
 ): ColumnDef<Employee>[] => {
   return [
     {
@@ -158,15 +163,30 @@ export const getColumns = (
                 </Button>
               </CreateAccount>
             )}
-            <Button
-              variant="ghost"
-              size="sm"
+
+            <ConfirmDialog
               title="Delete Employee"
-              className="hover:bg-red-50 text-red-600 hover:text-red-700"
-              onClick={() => deleteEmployee(employee.id)}
+              description={`Are you sure you want to delete <b>${
+                employee.firstName + " " + employee.lastName
+              }</b> with role <b style="text-transform: capitalize">${
+                employee.user.role
+              }</b>?`}
+              confirmText="Delete Employee"
+              cancelText="Cancel"
+              variant="destructive"
+              onConfirm={(callback) =>
+                handleDeleteEmployee(employee.id, callback)
+              }
             >
-              <Trash2 className="w-4 h-4" />
-            </Button>
+              <Button
+                variant="ghost"
+                size="sm"
+                title="Delete Employee"
+                className="hover:bg-red-50 text-red-600 hover:text-red-700"
+              >
+                <Trash2 className="w-4 h-4" />
+              </Button>
+            </ConfirmDialog>
           </div>
         );
       },
@@ -184,7 +204,19 @@ export function EmployeeList({ employees }: { employees?: Employee[] }) {
     React.useState<VisibilityState>({});
   const [rowSelection, setRowSelection] = React.useState({});
 
-  const columns = getColumns(deleteEmployee);
+  const handleDeleteEmployee = (id: string, callback?: () => void) => {
+    deleteEmployee(id, {
+      onSuccess: () => {
+        employeeNotifications.deleteSuccess();
+        callback?.();
+      },
+      onError: (error) => {
+        employeeNotifications.deleteError(error.message);
+      },
+    });
+  };
+
+  const columns = getColumns(handleDeleteEmployee);
 
   const table = useReactTable({
     data: employees || [],
