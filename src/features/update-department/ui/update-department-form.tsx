@@ -13,21 +13,23 @@ import { Input } from "@/shared/ui/input";
 import { Textarea } from "@/shared/ui/textarea";
 import { Building2, Save, User } from "lucide-react";
 
-interface CreateDepartmentFormProps {
+interface UpdateDepartmentFormProps {
   form: any;
   onSubmit: (data: any) => void;
   handleSubmit: (
     callback: (data: any) => void
   ) => (event: React.FormEvent<HTMLFormElement>) => void;
   control: any;
+  isPending: boolean;
 }
 
-export function CreateDepartmentForm({
+export function UpdateDepartmentForm({
   form,
   onSubmit,
   handleSubmit,
   control,
-}: CreateDepartmentFormProps) {
+  isPending,
+}: UpdateDepartmentFormProps) {
   return (
     <Form {...form}>
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 p-6">
@@ -149,11 +151,11 @@ export function CreateDepartmentForm({
             <div className="flex justify-end items-center gap-2">
               <Button
                 type="submit"
-                // disabled={isPending}
+                disabled={isPending}
                 className="bg-blue-600 hover:bg-blue-700 text-white"
               >
                 <Save className="mr-2 w-4 h-4" />
-                Create Department
+                Update Department
               </Button>
             </div>
           </div>

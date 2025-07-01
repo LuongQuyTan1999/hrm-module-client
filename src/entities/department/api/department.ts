@@ -21,4 +21,10 @@ export const departmentApi = {
   delete: async (id: string): Promise<void> => {
     await apiClient.delete(`/departments/${id}`);
   },
+  update: async (
+    id: string,
+    department: Omit<Department, "id" | "createdAt" | "updatedAt">
+  ): Promise<Department> => {
+    return await apiClient.put(`/departments/${id}`, department);
+  },
 };

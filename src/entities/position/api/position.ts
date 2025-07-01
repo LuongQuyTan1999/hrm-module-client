@@ -18,4 +18,10 @@ export const positionApi = {
   delete: async (id: string): Promise<void> => {
     await apiClient.delete(`/positions/${id}`);
   },
+  update: async (
+    id: string,
+    position: Omit<Position, "id" | "createdAt" | "updatedAt" | "employeeCount">
+  ): Promise<Position> => {
+    return await apiClient.put(`/positions/${id}`, position);
+  },
 };

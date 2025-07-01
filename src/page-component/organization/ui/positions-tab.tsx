@@ -27,7 +27,13 @@ import { Edit, Eye, Trash2 } from "lucide-react";
 import { Badge } from "@/shared/ui/badge";
 import { Award, Briefcase, Target, Users } from "lucide-react";
 import { useState } from "react";
-import { useDeletePosition, useGetPositions } from "@/entities/position";
+import {
+  Position,
+  useDeletePosition,
+  useGetPositions,
+} from "@/entities/position";
+import { UpdatePosition } from "@/features/update-position";
+import { departmentNotifications } from "@/entities/department";
 
 export const getColumns = (
   deletePosition: (id: string) => void
@@ -84,7 +90,8 @@ export const getColumns = (
       cell: ({ row }) => (
         <div className="">
           <p className="font-medium text-gray-900 text-sm">
-            {row.original.minSalary}$ - {row.original.maxSalary}$
+            ${Number(row.original.minSalary).toLocaleString()} - $
+            {Number(row.original.maxSalary).toLocaleString()}
           </p>
         </div>
       ),
@@ -125,7 +132,7 @@ export const getColumns = (
       id: "actions",
       enableHiding: false,
       cell: ({ row }) => {
-        const employee = row.original;
+        const position = row.original;
 
         return (
           <div className="flex items-center gap-2">
@@ -134,16 +141,19 @@ export const getColumns = (
               <Eye className="w-4 h-4" />
             </Button>
             {/* </Link> */}
-            <Button variant="ghost" size="sm" title="Edit Employee">
-              <Edit className="w-4 h-4" />
-            </Button>
+
+            <UpdatePosition position={position}>
+              <Button variant="ghost" size="sm" title="Edit Employee">
+                <Edit className="w-4 h-4" />
+              </Button>
+            </UpdatePosition>
 
             <Button
               variant="ghost"
               size="sm"
-              title="Delete Employee"
+              title="Delete Position"
               className="hover:bg-red-50 text-red-600 hover:text-red-700"
-              onClick={() => deletePosition(employee.id)}
+              onClick={() => deletePosition(position.id)}
             >
               <Trash2 className="w-4 h-4" />
             </Button>
@@ -167,7 +177,18 @@ export function PositionsTab({ activeTab }: { activeTab: string }) {
   );
   const positions = data?.items || [];
 
-  const columns = getColumns(deletePosition);
+  const handleDeletePosition = (id: string) => {
+    deletePosition(id, {
+      onSuccess: () => {
+        departmentNotifications.deleteSuccess();
+      },
+      onError: (error) => {
+        departmentNotifications.deleteError(error?.message);
+      },
+    });
+  };
+  
+  const columns = getColumns(handleDeletePosition);
 
   const table = useReactTable({
     data: positions || [],
@@ -215,7 +236,8 @@ export function PositionsTab({ activeTab }: { activeTab: string }) {
           <CardContent className="p-4 text-center">
             <Target className="mx-auto mb-2 w-8 h-8 text-orange-600" />
             <p className="font-bold text-gray-900 text-2xl">
-              {positions.reduce((sum, pos) => sum + pos.openPositions, 0)}
+              {/* {positions.reduce((sum, pos) => sum + pos.openPositions, 0)} */}
+              0
             </p>
             <p className="text-gray-600 text-sm">Open Positions</p>
           </CardContent>

@@ -3,6 +3,7 @@ import {
   useDeleteDepartment,
   useGetDepartments,
 } from "@/entities/department";
+import { UpdateDepartment } from "@/features/update-department";
 import { Button } from "@/shared/ui/button";
 import { Card, CardContent } from "@/shared/ui/card";
 import {
@@ -81,10 +82,11 @@ export function DepartmentsTab({ activeTab }: { activeTab: string }) {
           <CardContent className="p-4 text-center">
             <TrendingUp className="mx-auto mb-2 w-8 h-8 text-orange-600" />
             <p className="font-bold text-gray-900 text-2xl">
-              {Math.round(
+              {/* {Math.round(
                 departments.reduce((sum, dept) => sum + dept.employeeCount, 0) /
                   departments.length
-              )}
+              )} */}
+              10
             </p>
             <p className="text-gray-600 text-sm">Avg Team Size</p>
           </CardContent>
@@ -156,14 +158,9 @@ export function DepartmentsTab({ activeTab }: { activeTab: string }) {
                     <Eye className="mr-2 w-4 h-4" />
                     View Details
                   </Button>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    // onClick={() => openEditDepartmentModal(department)}
-                    title="Edit Department"
-                  >
-                    <Edit className="w-4 h-4" />
-                  </Button>
+
+                  <UpdateDepartment department={department} />
+
                   <Button
                     variant="outline"
                     size="sm"

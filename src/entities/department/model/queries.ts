@@ -28,7 +28,10 @@ export function useCreateDepartment() {
 
   return useMutation({
     mutationFn: (
-      department: Omit<Department, "id" | "createdAt" | "updatedAt" | "employeeCount">
+      department: Omit<
+        Department,
+        "id" | "createdAt" | "updatedAt" | "employeeCount"
+      >
     ) => departmentApi.create(department),
     onSuccess: (newDepartment) => {
       queryClient.invalidateQueries({
@@ -47,6 +50,25 @@ export function useDeleteDepartment() {
 
   return useMutation({
     mutationFn: (id: string) => departmentApi.delete(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: departmentQueries.lists(),
+      });
+    },
+  });
+}
+
+export function useUpdateDepartment() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({
+      id,
+      department,
+    }: {
+      id: string;
+      department: Omit<Department, "id" | "createdAt" | "updatedAt">;
+    }) => departmentApi.update(id, department),
     onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: departmentQueries.lists(),

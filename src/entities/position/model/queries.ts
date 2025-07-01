@@ -57,3 +57,25 @@ export function useDeletePosition() {
     },
   });
 }
+
+export function useUpdatePosition() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({
+      id,
+      position,
+    }: {
+      id: string;
+      position: Omit<
+        Position,
+        "id" | "createdAt" | "updatedAt" | "employeeCount"
+      >;
+    }) => positionApi.update(id, position),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: positionQueries.lists(),
+      });
+    },
+  });
+}

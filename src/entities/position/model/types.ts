@@ -1,8 +1,10 @@
+import { Department } from "@/entities/department";
+
 export interface Position {
   id: string;
   name: string;
   description?: string;
-  departmentId?: string;
+  department?: Department;
   minSalary: number;
   maxSalary: number;
   level: string;
