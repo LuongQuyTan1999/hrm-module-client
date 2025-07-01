@@ -2,6 +2,11 @@ export interface Position {
   id: string;
   name: string;
   description?: string;
+  departmentId?: string;
+  minSalary: number;
+  maxSalary: number;
+  level: string;
+  employeeCount: number;
   createdAt: Date;
   updatedAt: Date;
 }

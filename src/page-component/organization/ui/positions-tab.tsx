@@ -27,142 +27,20 @@ import { Edit, Eye, Trash2 } from "lucide-react";
 import { Badge } from "@/shared/ui/badge";
 import { Award, Briefcase, Target, Users } from "lucide-react";
 import { useState } from "react";
+import { useDeletePosition, useGetPositions } from "@/entities/position";
 
-const positions = [
-  {
-    id: 1,
-    title: "Software Engineer",
-    department: "Engineering",
-    level: "Mid-level",
-    salaryRange: "$80,000 - $120,000",
-    employeeCount: 15,
-    openPositions: 3,
-    reportsTo: "Senior Software Engineer",
-    requirements: [
-      "Bachelor's degree in Computer Science",
-      "3+ years of programming experience",
-      "Proficiency in JavaScript/TypeScript",
-      "Experience with React or similar frameworks",
-    ],
-    responsibilities: [
-      "Develop and maintain web applications",
-      "Collaborate with cross-functional teams",
-      "Write clean, maintainable code",
-      "Participate in code reviews",
-    ],
-    status: "Active",
-    createdDate: "2020-01-15",
-  },
-  {
-    id: 2,
-    title: "Product Manager",
-    department: "Product",
-    level: "Senior",
-    salaryRange: "$120,000 - $160,000",
-    employeeCount: 4,
-    openPositions: 1,
-    reportsTo: "VP of Product",
-    requirements: [
-      "Bachelor's degree in Business or related field",
-      "5+ years of product management experience",
-      "Strong analytical and communication skills",
-      "Experience with agile methodologies",
-    ],
-    responsibilities: [
-      "Define product strategy and roadmap",
-      "Gather and prioritize requirements",
-      "Work with engineering and design teams",
-      "Analyze market trends and user feedback",
-    ],
-    status: "Active",
-    createdDate: "2020-03-10",
-  },
-  {
-    id: 3,
-    title: "Marketing Specialist",
-    department: "Marketing",
-    level: "Entry-level",
-    salaryRange: "$50,000 - $70,000",
-    employeeCount: 8,
-    openPositions: 2,
-    reportsTo: "Marketing Manager",
-    requirements: [
-      "Bachelor's degree in Marketing or Communications",
-      "1+ years of marketing experience",
-      "Knowledge of digital marketing tools",
-      "Strong written and verbal communication",
-    ],
-    responsibilities: [
-      "Execute marketing campaigns",
-      "Create content for social media",
-      "Analyze campaign performance",
-      "Support lead generation efforts",
-    ],
-    status: "Active",
-    createdDate: "2020-02-20",
-  },
-  {
-    id: 4,
-    title: "Sales Representative",
-    department: "Sales",
-    level: "Mid-level",
-    salaryRange: "$60,000 - $90,000 + Commission",
-    employeeCount: 12,
-    openPositions: 4,
-    reportsTo: "Sales Manager",
-    requirements: [
-      "Bachelor's degree or equivalent experience",
-      "2+ years of sales experience",
-      "Strong negotiation skills",
-      "CRM software experience",
-    ],
-    responsibilities: [
-      "Identify and qualify prospects",
-      "Conduct sales presentations",
-      "Negotiate contracts and close deals",
-      "Maintain customer relationships",
-    ],
-    status: "Active",
-    createdDate: "2020-01-30",
-  },
-  {
-    id: 5,
-    title: "HR Specialist",
-    department: "Human Resources",
-    level: "Mid-level",
-    salaryRange: "$65,000 - $85,000",
-    employeeCount: 3,
-    openPositions: 0,
-    reportsTo: "HR Manager",
-    requirements: [
-      "Bachelor's degree in HR or related field",
-      "3+ years of HR experience",
-      "Knowledge of employment law",
-      "HRCI or SHRM certification preferred",
-    ],
-    responsibilities: [
-      "Manage recruitment and onboarding",
-      "Handle employee relations",
-      "Administer benefits programs",
-      "Ensure compliance with regulations",
-    ],
-    status: "Active",
-    createdDate: "2020-01-10",
-  },
-];
-
-export const getColumns = (): ColumnDef<any>[] => {
+export const getColumns = (
+  deletePosition: (id: string) => void
+): ColumnDef<any>[] => {
   return [
     {
       header: "Position",
-      accessorKey: "title",
+      accessorKey: "name",
       cell: ({ row }) => {
         return (
           <div>
-            <p className="font-medium text-gray-900">{row.getValue("title")}</p>
-            <p className="text-gray-500">
-              Reports to: {row.original.reportsTo}
-            </p>
+            <p className="font-medium text-gray-900">{row.getValue("name")}</p>
+            <p className="text-gray-500">{row.original.description || "N/A"}</p>
           </div>
         );
       },
@@ -174,7 +52,7 @@ export const getColumns = (): ColumnDef<any>[] => {
         return (
           <div className="">
             <Badge variant="outline" className="border-gray-300">
-              {row.getValue("department")}
+              {row.original.department.name}
             </Badge>
           </div>
         );
@@ -201,12 +79,12 @@ export const getColumns = (): ColumnDef<any>[] => {
       ),
     },
     {
-      accessorKey: "salaryRange",
+      accessorKey: "minSalary",
       header: "Salary Range",
       cell: ({ row }) => (
         <div className="">
           <p className="font-medium text-gray-900 text-sm">
-            {row.getValue("salaryRange")}
+            {row.original.minSalary}$ - {row.original.maxSalary}$
           </p>
         </div>
       ),
@@ -265,6 +143,7 @@ export const getColumns = (): ColumnDef<any>[] => {
               size="sm"
               title="Delete Employee"
               className="hover:bg-red-50 text-red-600 hover:text-red-700"
+              onClick={() => deletePosition(employee.id)}
             >
               <Trash2 className="w-4 h-4" />
             </Button>
@@ -275,14 +154,20 @@ export const getColumns = (): ColumnDef<any>[] => {
   ];
 };
 
-export function PositionsTab() {
+export function PositionsTab({ activeTab }: { activeTab: string }) {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({});
   const [rowSelection, setRowSelection] = React.useState({});
+  const { mutate: deletePosition } = useDeletePosition();
+  const { data, isLoading } = useGetPositions(
+    {},
+    { enabled: activeTab === "positions" }
+  );
+  const positions = data?.items || [];
 
-  const columns = getColumns();
+  const columns = getColumns(deletePosition);
 
   const table = useReactTable({
     data: positions || [],

@@ -16,6 +16,7 @@ import { z } from "zod";
 import { CreatePositionForm } from "./create-position-form";
 import { createPositionSchema } from "../model/schema";
 import { useGetDepartments } from "@/entities/department";
+import { positionNotifications, useCreatePosition } from "@/entities/position";
 
 export function CreatePosition() {
   const [open, setOpen] = useState(false);
@@ -24,11 +25,13 @@ export function CreatePosition() {
     { enabled: open }
   );
   const departments = departmentsResponse?.items || [];
+  const { mutate: createPosition } = useCreatePosition();
 
   const form = useForm<z.infer<typeof createPositionSchema>>({
     resolver: zodResolver(createPositionSchema),
     defaultValues: {
       name: "",
+      description: "",
       departmentId: "",
       level: "Entry-level",
       minSalary: 0,
@@ -38,7 +41,16 @@ export function CreatePosition() {
   const { handleSubmit, reset, control } = form;
 
   const onSubmit = (data: z.infer<typeof createPositionSchema>) => {
-    console.log("Form submitted with data:", data);
+    createPosition(data, {
+      onSuccess: () => {
+        positionNotifications.addSuccess();
+        reset();
+        setOpen(false);
+      },
+      onError: (error) => {
+        positionNotifications.addError(error?.message);
+      },
+    });
   };
 
   return (

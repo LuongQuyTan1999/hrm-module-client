@@ -38,9 +38,8 @@ export function EmployeeGrid({ employees }: { employees?: Employee[] }) {
                 <h3 className="font-semibold text-gray-900 truncate">
                   {employee.firstName} {employee.lastName}
                 </h3>
-                <p className="text-gray-600 text-sm truncate">
-                  {/* {employee.role} */}
-                  Admin
+                <p className="text-gray-600 text-sm truncate capitalize">
+                  {employee.user?.role}
                 </p>
               </div>
             </div>
@@ -55,7 +54,7 @@ export function EmployeeGrid({ employees }: { employees?: Employee[] }) {
               >
                 {employee.status || "Active"}
               </Badge>
-              {employee.hasAccount ? (
+              {employee.user ? (
                 <Badge className="bg-blue-100 border-blue-200 text-blue-800 text-xs">
                   <CheckCircle className="mr-1 w-3 h-3" />
                   Has Account
@@ -108,7 +107,7 @@ export function EmployeeGrid({ employees }: { employees?: Employee[] }) {
                 <Edit className="w-4 h-4" />
               </Button>
 
-              {!employee.hasAccount && (
+              {!employee.user && (
                 <CreateAccount employeeId={employee.id}>
                   <Button
                     variant="outline"

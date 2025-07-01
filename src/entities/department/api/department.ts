@@ -10,4 +10,15 @@ export const departmentApi = {
       params: filters,
     });
   },
+  create: async (
+    department: Omit<
+      Department,
+      "id" | "createdAt" | "updatedAt" | "employeeCount"
+    >
+  ): Promise<Department> => {
+    return await apiClient.post("/departments", department);
+  },
+  delete: async (id: string): Promise<void> => {
+    await apiClient.delete(`/departments/${id}`);
+  },
 };

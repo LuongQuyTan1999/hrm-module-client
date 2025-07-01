@@ -132,7 +132,7 @@ export function CreateAccountForm({
               )}
             />
 
-            <FormField
+            {/* <FormField
               control={control}
               name="email"
               render={({ field }) => (
@@ -144,10 +144,7 @@ export function CreateAccountForm({
                   <FormMessage />
                 </FormItem>
               )}
-            />
-          </div>
-
-          <div>
+            /> */}
             <FormField
               control={control}
               name="role"

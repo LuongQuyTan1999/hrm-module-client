@@ -15,9 +15,14 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { CreateDepartmentForm } from "./create-department-form";
 import { createDepartmentSchema } from "../model/schema";
+import {
+  departmentNotifications,
+  useCreateDepartment,
+} from "@/entities/department";
 
 export function CreateDepartment() {
   const [open, setOpen] = useState(false);
+  const { mutate: createDepartment } = useCreateDepartment();
 
   const form = useForm<z.infer<typeof createDepartmentSchema>>({
     resolver: zodResolver(createDepartmentSchema),
@@ -32,7 +37,16 @@ export function CreateDepartment() {
   const { handleSubmit, reset, control } = form;
 
   const onSubmit = (data: z.infer<typeof createDepartmentSchema>) => {
-    console.log("Form submitted with data:", data);
+    createDepartment(data, {
+      onSuccess: () => {
+        departmentNotifications.addSuccess();
+        reset();
+        setOpen(false);
+      },
+      onError: (error) => {
+        departmentNotifications.addError(error?.message);
+      },
+    });
   };
 
   return (

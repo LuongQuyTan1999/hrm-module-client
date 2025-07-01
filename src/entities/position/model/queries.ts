@@ -1,5 +1,10 @@
 import { PaginatedResponse } from "@/shared/types";
-import { useQuery, UseQueryOptions } from "@tanstack/react-query";
+import {
+  useMutation,
+  useQuery,
+  useQueryClient,
+  UseQueryOptions,
+} from "@tanstack/react-query";
 import { positionApi } from "../api/position";
 import { positionQueries } from "./query-keys";
 import { Position, PositionFilters } from "./types";
@@ -15,5 +20,40 @@ export function useGetPositions(
     queryKey: positionQueries.list(filters),
     queryFn: () => positionApi.getAll(filters),
     ...options,
+  });
+}
+
+export function useCreatePosition() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (
+      position: Omit<
+        Position,
+        "id" | "createdAt" | "updatedAt" | "employeeCount"
+      >
+    ) => positionApi.create(position),
+    onSuccess: (newPosition) => {
+      queryClient.invalidateQueries({
+        queryKey: positionQueries.all(),
+      });
+
+      queryClient.setQueryData(positionQueries.list(), (oldData: any) =>
+        oldData ? [...oldData, newPosition] : [newPosition]
+      );
+    },
+  });
+}
+
+export function useDeletePosition() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (id: string) => positionApi.delete(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: positionQueries.lists(),
+      });
+    },
   });
 }

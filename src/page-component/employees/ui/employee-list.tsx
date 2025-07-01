@@ -62,7 +62,9 @@ export const getColumns = (
       cell: ({ row }) => {
         return (
           <div className="">
-            <p className="font-medium text-gray-900">{"Product Manager"}</p>
+            <p className="font-medium text-gray-900 capitalize">
+              {row.original.user?.role}
+            </p>
             <p className="text-gray-500 text-sm">
               {row.original.department.name}
             </p>
@@ -114,7 +116,7 @@ export const getColumns = (
           >
             {row.getValue("status") || "Active"}
           </Badge>
-          {row.original.hasAccount ? (
+          {row.original.user ? (
             <Badge className="bg-blue-100 border-blue-200 text-blue-800 text-xs">
               <CheckCircle className="mr-1 w-3 h-3" />
               Has Account
@@ -144,7 +146,7 @@ export const getColumns = (
             <Button variant="ghost" size="sm" title="Edit Employee">
               <Edit className="w-4 h-4" />
             </Button>
-            {!employee.hasAccount && (
+            {!employee.user && (
               <CreateAccount employeeId={employee.id}>
                 <Button
                   variant="ghost"

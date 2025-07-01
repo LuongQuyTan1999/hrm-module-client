@@ -3,10 +3,10 @@ import { z } from "zod";
 export const createAccountSchema = z
   .object({
     username: z.string().min(2, "First name must be at least 2 characters"),
-    email: z
-      .string()
-      .min(1, "Email is required")
-      .email("Please enter a valid email"),
+    // email: z
+    //   .string()
+    //   .min(1, "Email is required")
+    //   .email("Please enter a valid email"),
     role: z.string().min(2, "Role must be at least 2 characters"),
     password: z
       .string()

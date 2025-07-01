@@ -30,13 +30,13 @@ export function OrganizationPage() {
   const renderTabContent = () => {
     switch (activeTab) {
       case "departments":
-        return <DepartmentsTab />;
+        return <DepartmentsTab activeTab={activeTab} />;
 
       case "positions":
-        return <PositionsTab />;
+        return <PositionsTab activeTab={activeTab} />;
 
       default:
-        return <DepartmentsTab />;
+        return <DepartmentsTab activeTab={activeTab} />;
     }
   };
 

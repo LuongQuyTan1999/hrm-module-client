@@ -10,4 +10,12 @@ export const positionApi = {
       params: filters,
     });
   },
+  create: async (
+    position: Omit<Position, "id" | "createdAt" | "updatedAt" | "employeeCount">
+  ): Promise<Position> => {
+    return await apiClient.post("/positions", position);
+  },
+  delete: async (id: string): Promise<void> => {
+    await apiClient.delete(`/positions/${id}`);
+  },
 };

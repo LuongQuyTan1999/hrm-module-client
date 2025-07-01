@@ -1,5 +1,6 @@
-import { Department } from "@/entities/department/model/types";
-import { Position } from "@/entities/position/model/types";
+import { Department } from "@/entities/department";
+import { Position } from "@/entities/position";
+import { User } from "@/shared/types";
 
 export interface Employee {
   id: string;
@@ -19,7 +20,7 @@ export interface Employee {
   bankAccount: string;
   bankName: string;
   taxCode: string;
-  hasAccount: boolean;
+  user: User;
   employeeCode: string;
   status: "Active" | "Inactive";
 }

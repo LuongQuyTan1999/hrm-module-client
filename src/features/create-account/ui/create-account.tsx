@@ -1,5 +1,9 @@
 "use client";
-import { useGetEmployee } from "@/entities/employee";
+import {
+  employeeNotifications,
+  useCreateAccount,
+  useGetEmployee,
+} from "@/entities/employee";
 import {
   Dialog,
   DialogContent,
@@ -27,12 +31,13 @@ export function CreateAccount({
   const { data: employee } = useGetEmployee(employeeId, {
     enabled: open,
   });
+  const { mutate: createAccount } = useCreateAccount(employeeId);
 
   const form = useForm<z.infer<typeof createAccountSchema>>({
     resolver: zodResolver(createAccountSchema),
     defaultValues: {
       username: "",
-      email: "",
+      // email: "",
       sendWelcomeEmail: true,
       requirePasswordChange: true,
     },
@@ -40,16 +45,16 @@ export function CreateAccount({
   const { handleSubmit, reset, control } = form;
 
   const onSubmit = (data: z.infer<typeof createAccountSchema>) => {
-    // addEmployee(data, {
-    //   onSuccess: () => {
-    //     employeeNotifications.addSuccess();
-    //     reset();
-    //     setOpen(false);
-    //   },
-    //   onError: (error) => {
-    //     employeeNotifications.addError(error?.message);
-    //   },
-    // });
+    createAccount(data, {
+      onSuccess: () => {
+        employeeNotifications.updateSuccess();
+        reset();
+        setOpen(false);
+      },
+      onError: (error) => {
+        employeeNotifications.addError(error?.message);
+      },
+    });
   };
 
   return (

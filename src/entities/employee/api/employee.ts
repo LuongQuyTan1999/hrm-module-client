@@ -32,4 +32,17 @@ export const employeeApi = {
   delete: async (id: string): Promise<string> => {
     return await apiClient.delete(`/employees/${id}`);
   },
+  createAccount: async (
+    employeeId: string,
+    data: {
+      username: string;
+      password: string;
+      role: string;
+    }
+  ): Promise<Employee> => {
+    return await apiClient.post(
+      `/employees/${employeeId}/create-account`,
+      data
+    );
+  },
 };

@@ -78,3 +78,20 @@ export function useGetEmployee(
     ...options,
   });
 }
+
+export function useCreateAccount(employeeId: string) {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (data: { username: string; password: string; role: string }) =>
+      employeeApi.createAccount(employeeId, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: employeeQueries.lists(),
+      });
+      queryClient.invalidateQueries({
+        queryKey: employeeQueries.detail(employeeId),
+      });
+    },
+  });
+}
