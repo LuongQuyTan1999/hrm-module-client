@@ -27,6 +27,12 @@ export const mainMenuItems = [
     icon: Calendar,
     description: "Time Off Requests",
   },
+  {
+    name: "Payroll Management",
+    href: "/payroll",
+    icon: CreditCard,
+    description: "Payroll Management",
+  },
 ];
 
 export const moreToolsItems = [
@@ -36,12 +42,7 @@ export const moreToolsItems = [
     icon: TrendingUp,
     description: "Reviews & Goals",
   },
-  {
-    name: "Payroll",
-    href: "/payroll",
-    icon: CreditCard,
-    description: "Compensation",
-  },
+
   {
     name: "Organization",
     href: "/organization",
