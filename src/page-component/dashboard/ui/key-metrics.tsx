@@ -6,7 +6,7 @@ export function KeyMetrics() {
   return (
     <div className="gap-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4">
       <Card className="border border-gray-200">
-        <CardContent className="p-6">
+        <CardContent className="">
           <div className="flex justify-between items-center">
             <div>
               <p className="font-medium text-gray-600 text-sm">
@@ -27,7 +27,7 @@ export function KeyMetrics() {
       </Card>
 
       <Card className="border border-gray-200">
-        <CardContent className="p-6">
+        <CardContent className="">
           <div className="flex justify-between items-center">
             <div>
               <p className="font-medium text-gray-600 text-sm">New Hires</p>
@@ -46,7 +46,7 @@ export function KeyMetrics() {
       </Card>
 
       <Card className="border border-gray-200">
-        <CardContent className="p-6">
+        <CardContent className="">
           <div className="flex justify-between items-center">
             <div>
               <p className="font-medium text-gray-600 text-sm">Departments</p>
@@ -65,7 +65,7 @@ export function KeyMetrics() {
       </Card>
 
       <Card className="border border-gray-200">
-        <CardContent className="p-6">
+        <CardContent className="">
           <div className="flex justify-between items-center">
             <div>
               <p className="font-medium text-gray-600 text-sm">

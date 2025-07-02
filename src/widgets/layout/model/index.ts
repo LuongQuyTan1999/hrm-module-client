@@ -22,8 +22,8 @@ export const mainMenuItems = [
     description: "Employee Management",
   },
   {
-    name: "Leave Management",
-    href: "/leave",
+    name: "Attendance Management",
+    href: "/attendance",
     icon: Calendar,
     description: "Time Off Requests",
   },

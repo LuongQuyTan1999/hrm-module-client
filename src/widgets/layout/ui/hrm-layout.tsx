@@ -3,7 +3,7 @@
 import { useAuth } from "@/entities/auth";
 import { cn } from "@/shared/lib/tailwind-merge";
 import { Button } from "@/shared/ui/button";
-import { Bell, HelpCircle, Search, Users, X } from "lucide-react";
+import { Bell, HelpCircle, Menu, Search, Users, X } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import React, { useState } from "react";
@@ -141,17 +141,28 @@ export function HRMLayout({ children }: HRMLayoutProps) {
       <div className="lg:pl-72">
         {/* Top header - Clean and minimal */}
         <header className="top-0 z-30 sticky flex justify-end items-center bg-white px-6 border-gray-200 border-b h-16">
-          {/* Header actions */}
           <div className="flex items-center gap-4">
+            <Button
+              variant="ghost"
+              size="icon"
+              className="lg:hidden"
+              onClick={() => setSidebarOpen(true)}
+            >
+              <Menu className="w-5 h-5" />
+            </Button>
+          </div>
+
+          {/* Header actions */}
+          <div className="flex flex-1 justify-end items-center gap-4">
             {/* Search - Large and accessible */}
-            <div className="hidden md:block relative">
+            {/* <div className="hidden md:block relative">
               <Search className="top-1/2 left-3 absolute w-4 h-4 text-gray-500 -translate-y-1/2" />
               <input
                 type="text"
                 placeholder="Search employees..."
                 className="bg-gray-50 py-2 pr-4 pl-10 border border-gray-300 focus:border-transparent rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 w-80 text-base"
               />
-            </div>
+            </div> */}
 
             {/* Notifications - Large touch target */}
             <Button variant="ghost" size="icon" className="relative w-10 h-10">

@@ -41,7 +41,7 @@ export function OrganizationPage() {
   };
 
   return (
-    <div className="space-y-6 mx-auto max-w-7xl">
+    <div className="space-y-6">
       {/* Header */}
       <div className="flex lg:flex-row flex-col lg:justify-between lg:items-center gap-4">
         <div>
@@ -119,15 +119,15 @@ export function OrganizationPage() {
       </div>
 
       {/* Navigation Tabs */}
-      <div className="bg-white border-gray-200 border-b rounded-lg">
-        <nav className="flex space-x-8 px-6 overflow-x-auto">
+      <div className="border-gray-200 border-b">
+        <nav className="flex space-x-8 -mb-px">
           {tabs.map((tab) => {
             const Icon = tab.icon;
             return (
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
-                className={`py-4 px-1 border-b-2 font-medium text-base whitespace-nowrap flex items-center gap-2 transition-colors rounded-sm ${
+                className={`py-4 px-1 border-b-2 font-medium text-base whitespace-nowrap flex items-center gap-2 transition-colors ${
                   activeTab === tab.id
                     ? "border-blue-600 text-blue-600"
                     : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"

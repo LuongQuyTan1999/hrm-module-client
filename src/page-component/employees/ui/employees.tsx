@@ -28,7 +28,7 @@ export function EmployeesPage() {
   });
 
   return (
-    <div className="space-y-6 mx-auto max-w-7xl">
+    <div className="space-y-6">
       <div className="flex lg:flex-row flex-col lg:justify-between lg:items-center gap-4">
         <div>
           <h1 className="font-semibold text-gray-900 text-2xl">

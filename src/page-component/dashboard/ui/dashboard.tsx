@@ -1,12 +1,8 @@
 import { AddEmployee } from "@/features/add-employee";
-import { DepartmentGrowth } from "./department-growth";
 import { KeyMetrics } from "./key-metrics";
 import { PendingAction } from "./pending-action";
-import { QuickActions } from "./quick-actions";
 import { QuickStats } from "./quick-stats";
 import { RecentActivity } from "./recent-activity";
-import { TopPerformers } from "./top-performers";
-import { UpcomingEvents } from "./upcoming-events";
 
 export function DashboardPage() {
   return (
@@ -32,16 +28,6 @@ export function DashboardPage() {
 
         <PendingAction />
       </div>
-
-      <div className="gap-6 grid grid-cols-1 lg:grid-cols-2">
-        <TopPerformers />
-
-        <DepartmentGrowth />
-      </div>
-
-      <UpcomingEvents />
-
-      <QuickActions />
     </div>
   );
 }

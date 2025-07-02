@@ -1,18 +1,24 @@
 import { Button } from "@/shared/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/shared/ui/card";
+import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/shared/ui/card";
 import { ArrowRight, Award } from "lucide-react";
 import Link from "next/link";
 import { dashboardData } from "../model/mock-data";
 
 export function TopPerformers() {
   return (
-    <Card className="border border-gray-200">
-      <CardHeader className="px-0 border-gray-100 border-b">
-        <CardTitle className="p-6 font-semibold text-gray-900 text-lg">
+    <Card className="gap-0 border border-gray-200">
+      <CardHeader className="border-gray-100 border-b">
+        <CardTitle className="font-semibold text-gray-900 text-lg">
           Top Performers
         </CardTitle>
       </CardHeader>
-      <CardContent className="p-6">
+      <CardContent >
         <div className="space-y-4">
           {dashboardData.teamInsights.topPerformers.map((performer, index) => (
             <div key={index} className="flex justify-between items-center">
@@ -41,6 +47,9 @@ export function TopPerformers() {
             </div>
           ))}
         </div>
+      </CardContent>
+
+      <CardFooter className="w-full">
         <div className="mt-4 pt-4 border-gray-100 border-t">
           <Link href="/performance">
             <Button variant="outline" className="w-full">
@@ -49,7 +58,7 @@ export function TopPerformers() {
             </Button>
           </Link>
         </div>
-      </CardContent>
+      </CardFooter>
     </Card>
   );
 }

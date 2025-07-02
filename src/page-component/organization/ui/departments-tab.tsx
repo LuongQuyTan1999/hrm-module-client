@@ -52,7 +52,7 @@ export function DepartmentsTab({ activeTab }: { activeTab: string }) {
       {/* Department Stats */}
       <div className="gap-4 grid grid-cols-1 md:grid-cols-4">
         <Card className="border border-gray-200">
-          <CardContent className="p-4 text-center">
+          <CardContent className="text-center">
             <Building2 className="mx-auto mb-2 w-8 h-8 text-blue-600" />
             <p className="font-bold text-gray-900 text-2xl">
               {departments.length}
@@ -62,7 +62,7 @@ export function DepartmentsTab({ activeTab }: { activeTab: string }) {
         </Card>
 
         <Card className="border border-gray-200">
-          <CardContent className="p-4 text-center">
+          <CardContent className="text-center">
             <Users className="mx-auto mb-2 w-8 h-8 text-green-600" />
             <p className="font-bold text-gray-900 text-2xl">
               {departments.reduce((sum, dept) => sum + dept.employeeCount, 0)}
@@ -72,7 +72,7 @@ export function DepartmentsTab({ activeTab }: { activeTab: string }) {
         </Card>
 
         <Card className="border border-gray-200">
-          <CardContent className="p-4 text-center">
+          <CardContent className="text-center">
             <DollarSign className="mx-auto mb-2 w-8 h-8 text-purple-600" />
             <p className="font-bold text-gray-900 text-2xl">
               ${(0 / 1000000).toFixed(1)}M
@@ -82,7 +82,7 @@ export function DepartmentsTab({ activeTab }: { activeTab: string }) {
         </Card>
 
         <Card className="border border-gray-200">
-          <CardContent className="p-4 text-center">
+          <CardContent className="text-center">
             <TrendingUp className="mx-auto mb-2 w-8 h-8 text-orange-600" />
             <p className="font-bold text-gray-900 text-2xl">
               {/* {Math.round(
@@ -97,13 +97,13 @@ export function DepartmentsTab({ activeTab }: { activeTab: string }) {
       </div>
 
       {/* Departments Grid */}
-      <div className="gap-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+      <div className="gap-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4">
         {departments.map((department) => (
           <Card
             key={department.id}
             className="hover:shadow-lg border border-gray-200 transition-shadow"
           >
-            <CardContent className="p-6">
+            <CardContent className="px-6">
               <div className="flex justify-between items-start mb-4">
                 <div className="flex items-center gap-3">
                   <div

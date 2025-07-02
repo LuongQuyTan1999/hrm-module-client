@@ -35,7 +35,7 @@ export function EmployeeGrid({ employees }: { employees?: Employee[] }) {
   };
 
   return (
-    <div className="gap-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+    <div className="gap-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4">
       {employees?.map((employee) => (
         <div
           key={employee.id}

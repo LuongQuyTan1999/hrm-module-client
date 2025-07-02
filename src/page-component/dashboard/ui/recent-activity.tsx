@@ -30,9 +30,9 @@ export function RecentActivity() {
   };
 
   return (
-    <Card className="border border-gray-200">
-      <CardHeader className="px-0 border-gray-100 border-b">
-        <CardTitle className="p-6 font-semibold text-gray-900 text-lg">
+    <Card className="gap-0 border border-gray-200">
+      <CardHeader className="border-gray-100 border-b">
+        <CardTitle className="font-semibold text-gray-900 text-lg">
           Recent Activity
         </CardTitle>
       </CardHeader>
@@ -72,7 +72,7 @@ export function RecentActivity() {
             </div>
           ))}
         </div>
-        <div className="p-4 border-gray-100 border-t">
+        <div className="p-4 pb-0 border-gray-100 border-t">
           <Button variant="outline" className="w-full">
             View All Activity
           </Button>

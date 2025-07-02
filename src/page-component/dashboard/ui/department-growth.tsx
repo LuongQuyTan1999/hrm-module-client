@@ -6,9 +6,9 @@ import { dashboardData } from "../model/mock-data";
 
 export function DepartmentGrowth() {
   return (
-    <Card className="border border-gray-200">
-      <CardHeader className="px-0 border-gray-100 border-b">
-        <CardTitle className="p-6 font-semibold text-gray-900 text-lg">
+    <Card className="gap-0 border border-gray-200">
+      <CardHeader className="border-gray-100 border-b">
+        <CardTitle className="font-semibold text-gray-900 text-lg">
           Department Growth
         </CardTitle>
       </CardHeader>

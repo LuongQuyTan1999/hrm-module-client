@@ -225,7 +225,7 @@ export function PositionsTab({ activeTab }: { activeTab: string }) {
       {/* Position Stats */}
       <div className="gap-4 grid grid-cols-1 md:grid-cols-4">
         <Card className="border border-gray-200">
-          <CardContent className="p-4 text-center">
+          <CardContent className="text-center">
             <Briefcase className="mx-auto mb-2 w-8 h-8 text-blue-600" />
             <p className="font-bold text-gray-900 text-2xl">
               {positions.length}
@@ -235,7 +235,7 @@ export function PositionsTab({ activeTab }: { activeTab: string }) {
         </Card>
 
         <Card className="border border-gray-200">
-          <CardContent className="p-4 text-center">
+          <CardContent className="text-center">
             <Users className="mx-auto mb-2 w-8 h-8 text-green-600" />
             <p className="font-bold text-gray-900 text-2xl">
               {positions.reduce((sum, pos) => sum + pos.employeeCount, 0)}
@@ -245,7 +245,7 @@ export function PositionsTab({ activeTab }: { activeTab: string }) {
         </Card>
 
         <Card className="border border-gray-200">
-          <CardContent className="p-4 text-center">
+          <CardContent className="text-center">
             <Target className="mx-auto mb-2 w-8 h-8 text-orange-600" />
             <p className="font-bold text-gray-900 text-2xl">
               {/* {positions.reduce((sum, pos) => sum + pos.openPositions, 0)} */}
@@ -256,7 +256,7 @@ export function PositionsTab({ activeTab }: { activeTab: string }) {
         </Card>
 
         <Card className="border border-gray-200">
-          <CardContent className="p-4 text-center">
+          <CardContent className="text-center">
             <Award className="mx-auto mb-2 w-8 h-8 text-purple-600" />
             <p className="font-bold text-gray-900 text-2xl">
               {positions.filter((pos) => pos.level === "Senior").length}
