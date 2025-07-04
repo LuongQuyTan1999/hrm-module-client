@@ -35,7 +35,7 @@ export function useCreateDepartment() {
     ) => departmentApi.create(department),
     onSuccess: (newDepartment) => {
       queryClient.invalidateQueries({
-        queryKey: departmentQueries.all(),
+        queryKey: departmentQueries.lists(),
       });
 
       queryClient.setQueryData(departmentQueries.list(), (oldData: any) =>

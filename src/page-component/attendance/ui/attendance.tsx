@@ -1,4 +1,5 @@
 "use client";
+import { TIME_PERIODS, TimePeriod } from "@/entities/attendance";
 import { Card, CardContent } from "@/shared/ui/card";
 import { Input } from "@/shared/ui/input";
 import {
@@ -11,16 +12,13 @@ import {
 import { CheckCircle, Users } from "lucide-react";
 import { useState } from "react";
 import { statusCards } from "../model/mock";
-import { Live } from "./live";
-import { Requests } from "./requests";
+import { LeaveRequests } from "./leave-requests";
+import { LiveStatus } from "./live-status";
 
 export function AttendancePage() {
-  const [activeTab, setActiveTab] = useState<"live" | "approvals" | "reports">(
-    "live"
-  );
-  const [selectedTeam, setSelectedTeam] = useState("all");
+  const [activeTab, setActiveTab] = useState<"live" | "approvals">("live");
   const [searchTerm, setSearchTerm] = useState("");
-  const [timePeriod, setTimePeriod] = useState<"today" | "week">("today");
+  const [timePeriod, setTimePeriod] = useState<TimePeriod>(TIME_PERIODS.TODAY);
 
   const managerTabs = [
     { id: "live", label: "Live Status", icon: Users },
@@ -55,26 +53,14 @@ export function AttendancePage() {
         <div className="flex items-center gap-4">
           <Select
             value={timePeriod}
-            onValueChange={(value) => setTimePeriod(value as "today" | "week")}
+            onValueChange={(value) => setTimePeriod(value as TimePeriod)}
           >
             <SelectTrigger className="w-[140px]">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="today">📅 Today</SelectItem>
-              <SelectItem value="week">📊 This Week</SelectItem>
-            </SelectContent>
-          </Select>
-          <Select value={selectedTeam} onValueChange={setSelectedTeam}>
-            <SelectTrigger className="w-[160px]">
-              <SelectValue placeholder="All Teams" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All Teams</SelectItem>
-              <SelectItem value="fe">Frontend</SelectItem>
-              <SelectItem value="be">Backend</SelectItem>
-              <SelectItem value="qa">QA</SelectItem>
-              <SelectItem value="hr">HR</SelectItem>
+              <SelectItem value={TIME_PERIODS.TODAY}>📅 Today</SelectItem>
+              <SelectItem value={TIME_PERIODS.WEEK}>📊 This Week</SelectItem>
             </SelectContent>
           </Select>
         </div>
@@ -121,9 +107,9 @@ export function AttendancePage() {
         </nav>
       </div>
 
-      {activeTab === "live" && <Live timePeriod={timePeriod} />}
+      {activeTab === "live" && <LiveStatus timePeriod={timePeriod} />}
 
-      {activeTab === "approvals" && <Requests />}
+      {activeTab === "approvals" && <LeaveRequests />}
     </div>
   );
 }
