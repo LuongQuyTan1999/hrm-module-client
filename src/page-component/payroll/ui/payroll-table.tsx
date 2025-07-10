@@ -1,21 +1,14 @@
 "use client";
 
-import { useState } from "react";
 import {
-  ColumnDef,
-  ColumnFiltersState,
-  flexRender,
-  getCoreRowModel,
-  getFilteredRowModel,
-  getPaginationRowModel,
-  getSortedRowModel,
-  SortingState,
-  useReactTable,
-  VisibilityState,
-} from "@tanstack/react-table";
-import { Card, CardContent, CardHeader, CardTitle } from "@/shared/ui/card";
+  PayrollRecord,
+  PayrollStatus,
+  useGetPayrolls,
+} from "@/entities/payroll";
+import { formatCurrency } from "@/shared/lib/format-currency";
 import { Badge } from "@/shared/ui/badge";
 import { Button } from "@/shared/ui/button";
+import { Card, CardContent, CardHeader } from "@/shared/ui/card";
 import { Input } from "@/shared/ui/input";
 import {
   Select,
@@ -33,50 +26,47 @@ import {
   TableRow,
 } from "@/shared/ui/table";
 import {
-  FileText,
-  Download,
-  Filter,
-  Search,
-  Eye,
-  Edit,
-  MoreHorizontal,
+  ColumnDef,
+  ColumnFiltersState,
+  flexRender,
+  getCoreRowModel,
+  getFilteredRowModel,
+  getPaginationRowModel,
+  getSortedRowModel,
+  SortingState,
+  useReactTable,
+  VisibilityState,
+} from "@tanstack/react-table";
+import {
+  Ban,
   CheckCircle,
   DollarSign,
-  Ban,
+  Edit,
+  Eye,
+  Filter,
+  Search,
 } from "lucide-react";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/shared/ui/dropdown-menu";
-import { formatCurrency } from "@/shared/lib/format-currency";
-import { payrollTableData } from "../model/mock-data";
-
-interface PayrollRecord {
-  id: string;
-  employeeId: string;
-  employeeName: string;
-  department: string;
-  position: string;
-  payPeriod: string;
-  baseSalary: number;
-  overtimePay: number;
-  bonuses: number;
-  allowances: number;
-  totalEarnings: number;
-  deductions: number;
-  taxAmount: number;
-  netSalary: number;
-  status: "Draft" | "Approved" | "Paid" | "Cancelled";
-}
+import { useState } from "react";
+import { PayrollDetailModal } from "./payroll-detail-modal";
 
 const getStatusBadge = (status: PayrollRecord["status"]) => {
   const statusConfig = {
-    Draft: { label: "Draft", className: "bg-gray-100 text-gray-800" },
-    Approved: { label: "Approved", className: "bg-blue-100 text-blue-800" },
-    Paid: { label: "Paid", className: "bg-green-100 text-green-800" },
-    Cancelled: { label: "Cancelled", className: "bg-red-100 text-red-800" },
+    [PayrollStatus.Pending]: {
+      label: "Draft",
+      className: "bg-gray-100 text-gray-800",
+    },
+    [PayrollStatus.Approved]: {
+      label: "Approved",
+      className: "bg-blue-100 text-blue-800",
+    },
+    [PayrollStatus.Paid]: {
+      label: "Paid",
+      className: "bg-green-100 text-green-800",
+    },
+    [PayrollStatus.Cancelled]: {
+      label: "Cancelled",
+      className: "bg-red-100 text-red-800",
+    },
   };
 
   const config = statusConfig[status];
@@ -91,10 +81,14 @@ const getColumns = (): ColumnDef<PayrollRecord>[] => {
       cell: ({ row }) => (
         <div>
           <div className="font-medium text-gray-900">
-            {row.original.employeeName}
+            {row.original.employee.firstName} {row.original.employee.lastName}
           </div>
-          <div className="text-gray-600 text-sm">{row.original.position}</div>
-          <div className="text-gray-500 text-xs">{row.original.department}</div>
+          <div className="text-gray-600 text-sm">
+            {row.original.employee.position.name}
+          </div>
+          <div className="text-gray-500 text-xs">
+            {row.original.employee.department.name}
+          </div>
         </div>
       ),
     },
@@ -103,7 +97,7 @@ const getColumns = (): ColumnDef<PayrollRecord>[] => {
       header: "Basic Salary",
       cell: ({ row }) => (
         <span className="font-medium">
-          {formatCurrency(row.original.baseSalary)}
+          {formatCurrency(Number(row.original.basicSalary))}
         </span>
       ),
     },
@@ -113,13 +107,13 @@ const getColumns = (): ColumnDef<PayrollRecord>[] => {
       cell: ({ row }) => (
         <span
           className={
-            row.original.overtimePay > 0
+            Number(row.original.overtimeSalary) > 0
               ? "text-blue-600 font-medium"
               : "text-gray-400"
           }
         >
-          {row.original.overtimePay > 0
-            ? formatCurrency(row.original.overtimePay)
+          {Number(row.original.overtimeSalary) > 0
+            ? formatCurrency(Number(row.original.overtimeSalary))
             : "--"}
         </span>
       ),
@@ -130,13 +124,13 @@ const getColumns = (): ColumnDef<PayrollRecord>[] => {
       cell: ({ row }) => (
         <span
           className={
-            row.original.bonuses > 0
+            Number(row.original.bonuses) > 0
               ? "text-green-600 font-medium"
               : "text-gray-400"
           }
         >
-          {row.original.bonuses > 0
-            ? formatCurrency(row.original.bonuses)
+          {Number(row.original.bonuses) > 0
+            ? formatCurrency(Number(row.original.bonuses))
             : "--"}
         </span>
       ),
@@ -146,7 +140,7 @@ const getColumns = (): ColumnDef<PayrollRecord>[] => {
       header: "Deductions",
       cell: ({ row }) => (
         <span className="text-red-600">
-          -{formatCurrency(row.original.deductions)}
+          -{formatCurrency(Number(row.original.deductions))}
         </span>
       ),
     },
@@ -155,7 +149,7 @@ const getColumns = (): ColumnDef<PayrollRecord>[] => {
       header: "Net Salary",
       cell: ({ row }) => (
         <span className="font-bold text-gray-900">
-          {formatCurrency(row.original.netSalary)}
+          {formatCurrency(Number(row.original.netSalary))}
         </span>
       ),
     },
@@ -170,7 +164,7 @@ const getColumns = (): ColumnDef<PayrollRecord>[] => {
         const record = row.original;
         return (
           <div className="flex gap-1">
-            {record.status === "Draft" && (
+            {record.status === PayrollStatus.Pending && (
               <Button
                 size="sm"
                 variant="outline"
@@ -180,7 +174,7 @@ const getColumns = (): ColumnDef<PayrollRecord>[] => {
                 <CheckCircle className="w-3 h-3" />
               </Button>
             )}
-            {record.status === "Approved" && (
+            {record.status === PayrollStatus.Approved && (
               <Button
                 size="sm"
                 variant="outline"
@@ -190,7 +184,8 @@ const getColumns = (): ColumnDef<PayrollRecord>[] => {
                 <DollarSign className="w-3 h-3" />
               </Button>
             )}
-            {(record.status === "Draft" || record.status === "Approved") && (
+            {(record.status === PayrollStatus.Pending ||
+              record.status === PayrollStatus.Approved) && (
               <Button
                 size="sm"
                 variant="outline"
@@ -200,13 +195,21 @@ const getColumns = (): ColumnDef<PayrollRecord>[] => {
                 <Ban className="w-3 h-3" />
               </Button>
             )}
-            <Button
-              size="sm"
-              variant="outline"
-              className="hover:bg-gray-50 border-gray-300 text-xs"
+
+            <PayrollDetailModal
+              employeeId={record.employee.employeeCode}
+              employeeName={
+                record.employee.firstName + " " + record.employee.lastName
+              }
             >
-              <Eye className="w-3 h-3" />
-            </Button>
+              <Button
+                size="sm"
+                variant="outline"
+                className="hover:bg-gray-50 border-gray-300 text-xs"
+              >
+                <Eye className="w-3 h-3" />
+              </Button>
+            </PayrollDetailModal>
             <Button
               size="sm"
               variant="outline"
@@ -233,14 +236,13 @@ export function PayrollTable() {
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
   const [rowSelection, setRowSelection] = useState({});
 
-  // Payroll data state - this will be managed locally and sync with API
+  const { data } = useGetPayrolls();
+  const payrolls = data?.items || [];
 
-  // Get columns for React Table
   const columns = getColumns();
 
-  // React Table setup
   const table = useReactTable({
-    data: payrollTableData as PayrollRecord[],
+    data: payrolls,
     columns,
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
@@ -263,17 +265,22 @@ export function PayrollTable() {
     },
   });
 
-  // Statistics for summary
-  const totalGrossSalary = payrollTableData.reduce(
-    (sum, record) => sum + record.totalEarnings,
+  const totalBasicSalary = payrolls.reduce(
+    (sum, record) => sum + Number(record.basicSalary),
     0
   );
-  const totalNetSalary = payrollTableData.reduce(
-    (sum, record) => sum + record.netSalary,
+
+  const totalBonuses = payrolls.reduce(
+    (sum, record) => sum + Number(record.bonuses),
     0
   );
-  const totalDeductions = payrollTableData.reduce(
-    (sum, record) => sum + record.deductions,
+
+  const totalNetSalary = payrolls.reduce(
+    (sum, record) => sum + Number(record.netSalary),
+    0
+  );
+  const totalDeductions = payrolls.reduce(
+    (sum, record) => sum + Number(record.deductions),
     0
   );
 
@@ -396,13 +403,13 @@ export function PayrollTable() {
             <div className="gap-4 grid grid-cols-2 md:grid-cols-4 text-sm">
               <div>
                 <span className="text-gray-600">Total Basic Salary:</span>
-                <div className="font-bold">{formatCurrency(0)}</div>
+                <div className="font-bold">
+                  {formatCurrency(totalBasicSalary)}
+                </div>
               </div>
               <div>
-                <span className="text-gray-600">Total Gross Salary:</span>
-                <div className="font-bold">
-                  {formatCurrency(totalGrossSalary)}
-                </div>
+                <span className="text-gray-600">Total Bonuses:</span>
+                <div className="font-bold">{formatCurrency(totalBonuses)}</div>
               </div>
               <div>
                 <span className="text-gray-600">Total Deductions:</span>
