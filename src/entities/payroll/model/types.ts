@@ -32,3 +32,34 @@ export enum PayrollStatus {
   Paid = "paid",
   Cancelled = "cancelled",
 }
+
+export interface AdvanceRequest {
+  id: string;
+  employee: Employee;
+  requestAmount: string;
+  requestDate: string;
+  status: AdvanceRequestStatus;
+  reason: string;
+  isUrgent: boolean;
+  approver: Employee;
+  dueDate: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface UpdateAdvanceRequests extends Partial<AdvanceRequest> {}
+
+export enum AdvanceRequestStatus {
+  PENDING = "pending",
+  APPROVED = "approved",
+  REJECTED = "rejected",
+  PAID = "paid",
+}
+
+export interface AdvanceRequestsFilters {
+  employeeId?: string;
+  periodStart?: string;
+  periodEnd?: string;
+  page?: number;
+  limit?: number;
+}

@@ -1,10 +1,17 @@
 "use client";
 
+import {
+  AdvanceRequest,
+  advanceRequestsNotifications,
+  AdvanceRequestStatus,
+  UpdateAdvanceRequests,
+  useGetAllAdvanceRequests,
+  useUpdateAdvanceRequests,
+} from "@/entities/payroll";
 import { formatCurrency } from "@/shared/lib/format-currency";
 import { Badge } from "@/shared/ui/badge";
 import { Button } from "@/shared/ui/button";
 import { Card, CardContent } from "@/shared/ui/card";
-import { Dialog, DialogTrigger } from "@/shared/ui/dialog";
 import {
   Table,
   TableBody,
@@ -25,36 +32,27 @@ import {
   useReactTable,
   VisibilityState,
 } from "@tanstack/react-table";
-import { Calendar, CheckCircle, Eye, XCircle } from "lucide-react";
+import { Calendar, CheckCircle, DollarSign, XCircle } from "lucide-react";
 import { useState } from "react";
-import { advanceRequests } from "../model/mock-data";
-
-interface AdvanceRequest {
-  id: string;
-  employeeId: string;
-  employeeName: string;
-  department: string;
-  position: string;
-  requestDate: string;
-  amount: number;
-  reason: string;
-  status: "Pending" | "Approved" | "Rejected" | "Paid";
-  requestedDate: string;
-  urgencyLevel: "High" | "Medium" | "Low";
-  currentSalary: number;
-  maxAdvanceAmount: number;
-  remainingAdvance: number;
-}
 
 const getStatusBadge = (status: AdvanceRequest["status"]) => {
   const config = {
-    Pending: {
+    [AdvanceRequestStatus.PENDING]: {
       label: "Pending",
       className: "bg-yellow-100 text-yellow-800",
     },
-    Approved: { label: "Approved", className: "bg-green-100 text-green-800" },
-    Rejected: { label: "Rejected", className: "bg-red-100 text-red-800" },
-    Paid: { label: "Paid", className: "bg-blue-100 text-blue-800" },
+    [AdvanceRequestStatus.APPROVED]: {
+      label: "Approved",
+      className: "bg-green-100 text-green-800",
+    },
+    [AdvanceRequestStatus.REJECTED]: {
+      label: "Rejected",
+      className: "bg-red-100 text-red-800",
+    },
+    [AdvanceRequestStatus.PAID]: {
+      label: "Paid",
+      className: "bg-blue-100 text-blue-800",
+    },
   };
   return (
     <Badge variant="secondary" className={config[status].className}>
@@ -63,23 +61,24 @@ const getStatusBadge = (status: AdvanceRequest["status"]) => {
   );
 };
 
-const getUrgencyBadge = (urgency: AdvanceRequest["urgencyLevel"]) => {
-  const config = {
-    High: { label: "Urgent", className: "bg-red-100 text-red-800" },
-    Medium: {
-      label: "Normal",
-      className: "bg-yellow-100 text-yellow-800",
-    },
-    Low: { label: "Low", className: "bg-green-100 text-green-800" },
-  };
+const getUrgencyBadge = (urgency: AdvanceRequest["isUrgent"]) => {
+  if (urgency)
+    return (
+      <Badge variant="secondary" className="bg-red-100 text-red-800">
+        Urgent
+      </Badge>
+    );
+
   return (
-    <Badge variant="secondary" className={config[urgency].className}>
-      {config[urgency].label}
+    <Badge variant="secondary" className="bg-green-100 text-green-800">
+      Normal
     </Badge>
   );
 };
 
-const getColumns = (): ColumnDef<AdvanceRequest>[] => {
+const getColumns = (
+  handleUpdateAdvance: (id: string, body: UpdateAdvanceRequests) => void
+): ColumnDef<AdvanceRequest>[] => {
   return [
     {
       accessorKey: "employeeName",
@@ -87,11 +86,14 @@ const getColumns = (): ColumnDef<AdvanceRequest>[] => {
       cell: ({ row }) => (
         <div>
           <div className="font-medium text-gray-900">
-            {row.original.employeeName}
+            {row.original.employee.firstName} {row.original.employee.lastName}
           </div>
-          <div className="text-gray-600 text-sm">{row.original.employeeId}</div>
+          <div className="text-gray-600 text-sm">
+            {row.original.employee.employeeCode}
+          </div>
           <div className="text-gray-500 text-xs">
-            {row.original.department} • {row.original.position}
+            {row.original.employee.department.name} •{" "}
+            {row.original.employee.position.name}
           </div>
         </div>
       ),
@@ -102,14 +104,14 @@ const getColumns = (): ColumnDef<AdvanceRequest>[] => {
       cell: ({ row }) => (
         <div>
           <div className="font-semibold text-lg">
-            {formatCurrency(row.original.amount)}
+            {formatCurrency(Number(row.original.requestAmount))}
           </div>
-          <div className="text-gray-500 text-xs">
+          {/* <div className="text-gray-500 text-xs">
             Max: {formatCurrency(row.original.maxAdvanceAmount)}
           </div>
           <div className="text-gray-500 text-xs">
             Remaining: {formatCurrency(row.original.remainingAdvance)}
-          </div>
+          </div> */}
         </div>
       ),
     },
@@ -127,7 +129,7 @@ const getColumns = (): ColumnDef<AdvanceRequest>[] => {
     {
       accessorKey: "urgencyLevel",
       header: "Priority",
-      cell: ({ row }) => getUrgencyBadge(row.original.urgencyLevel),
+      cell: ({ row }) => getUrgencyBadge(row.original.isUrgent),
     },
     {
       accessorKey: "requestDate",
@@ -142,7 +144,7 @@ const getColumns = (): ColumnDef<AdvanceRequest>[] => {
           </div>
           <div className="text-gray-500 text-xs">
             Needed by:{" "}
-            {new Date(row.original.requestedDate).toLocaleDateString("en-US")}
+            {new Date(row.original.dueDate).toLocaleDateString("en-US")}
           </div>
         </div>
       ),
@@ -159,20 +161,17 @@ const getColumns = (): ColumnDef<AdvanceRequest>[] => {
         const request = row.original;
         return (
           <div className="flex justify-center items-center gap-1">
-            <Dialog>
-              <DialogTrigger asChild>
-                <Button variant="ghost" size="sm">
-                  <Eye className="w-4 h-4" />
-                </Button>
-              </DialogTrigger>
-            </Dialog>
-
-            {request.status === "Pending" && (
+            {request.status === AdvanceRequestStatus.PENDING && (
               <>
                 <Button
                   variant="ghost"
                   size="sm"
                   className="text-green-600 hover:text-green-700"
+                  onClick={() =>
+                    handleUpdateAdvance(row.original.id, {
+                      status: AdvanceRequestStatus.APPROVED,
+                    })
+                  }
                 >
                   <CheckCircle className="w-4 h-4" />
                 </Button>
@@ -180,11 +179,41 @@ const getColumns = (): ColumnDef<AdvanceRequest>[] => {
                   variant="ghost"
                   size="sm"
                   className="text-red-600 hover:text-red-700"
+                  onClick={() =>
+                    handleUpdateAdvance(row.original.id, {
+                      status: AdvanceRequestStatus.REJECTED,
+                    })
+                  }
                 >
                   <XCircle className="w-4 h-4" />
                 </Button>
               </>
             )}
+
+            {request.status === AdvanceRequestStatus.APPROVED && (
+              <>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="text-green-600 hover:text-green-700"
+                  onClick={() =>
+                    handleUpdateAdvance(row.original.id, {
+                      status: AdvanceRequestStatus.PAID,
+                    })
+                  }
+                >
+                  <DollarSign className="w-4 h-4" />
+                </Button>
+              </>
+            )}
+
+            {/* <Dialog>
+              <DialogTrigger asChild>
+                <Button variant="ghost" size="sm">
+                  <Eye className="w-4 h-4" />
+                </Button>
+              </DialogTrigger>
+            </Dialog> */}
           </div>
         );
       },
@@ -198,12 +227,30 @@ export function AdvanceRequestManagement() {
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
   const [rowSelection, setRowSelection] = useState({});
 
-  // Get columns for React Table
-  const columns = getColumns();
+  const { data } = useGetAllAdvanceRequests();
+  const advanceRequests = data?.items || [];
+
+  const { mutate: updateAdvance } = useUpdateAdvanceRequests();
+
+  const handleUpdateAdvance = (id: string, body: UpdateAdvanceRequests) => {
+    updateAdvance(
+      { id, body },
+      {
+        onSuccess: () => {
+          advanceRequestsNotifications.updateSuccess();
+        },
+        onError: (error) => {
+          advanceRequestsNotifications.deleteError(error?.message);
+        },
+      }
+    );
+  };
+
+  const columns = getColumns(handleUpdateAdvance);
 
   // React Table setup
   const table = useReactTable({
-    data: advanceRequests as AdvanceRequest[],
+    data: advanceRequests,
     columns,
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
@@ -225,6 +272,22 @@ export function AdvanceRequestManagement() {
       rowSelection,
     },
   });
+
+  const pendingRequest = advanceRequests.filter(
+    (ad) => ad.status === AdvanceRequestStatus.PENDING
+  ).length;
+
+  const approvedRequest = advanceRequests.filter(
+    (ad) =>
+      ad.status === AdvanceRequestStatus.APPROVED ||
+      ad.status === AdvanceRequestStatus.PAID
+  ).length;
+
+  const urgentRequest = advanceRequests.filter((ad) => ad.isUrgent).length;
+  const totalRequestAmount = advanceRequests.reduce(
+    (sum, ad) => (sum += Number(ad.requestAmount)),
+    0
+  );
 
   return (
     <Card>
@@ -284,20 +347,29 @@ export function AdvanceRequestManagement() {
         {/* Summary Stats */}
         <div className="gap-4 grid grid-cols-4 bg-gray-50 mt-6 p-4 rounded-lg">
           <div className="text-center">
-            <div className="font-bold text-yellow-600 text-2xl">2</div>
+            <div className="font-bold text-yellow-600 text-2xl">
+              {pendingRequest}
+            </div>
             <div className="text-gray-600 text-sm">Pending</div>
           </div>
           <div className="text-center">
-            <div className="font-bold text-green-600 text-2xl">1</div>
+            <div className="font-bold text-green-600 text-2xl">
+              {approvedRequest}
+            </div>
             <div className="text-gray-600 text-sm">Approved</div>
           </div>
           <div className="text-center">
-            <div className="font-bold text-red-600 text-2xl">2</div>
+            <div className="font-bold text-red-600 text-2xl">
+              {urgentRequest}
+            </div>
             <div className="text-gray-600 text-sm">Urgent</div>
           </div>
           <div className="text-center">
             <div className="font-bold text-blue-600 text-lg">
-              {formatCurrency(15000000).replace("₫", "").replace(" ", "")}₫
+              {formatCurrency(totalRequestAmount)
+                .replace("₫", "")
+                .replace(" ", "")}
+              ₫
             </div>
             <div className="text-gray-600 text-sm">Total Requested</div>
           </div>

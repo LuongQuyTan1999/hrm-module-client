@@ -53,7 +53,7 @@ export function LoginForm({
         className={cn("flex flex-col gap-6", className)}
         {...props}
       >
-        <div className="grid gap-6">
+        <div className="gap-6 grid">
           <FormField
             control={form.control}
             name="email"
@@ -93,14 +93,14 @@ export function LoginForm({
                       type="button"
                       variant="ghost"
                       size="sm"
-                      className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
+                      className="top-0 right-0 absolute hover:bg-transparent px-3 py-2 h-full"
                       onClick={() => setShowPassword(!showPassword)}
                       tabIndex={-1}
                     >
                       {showPassword ? (
-                        <EyeOff className="h-4 w-4" />
+                        <EyeOff className="w-4 h-4" />
                       ) : (
-                        <Eye className="h-4 w-4" />
+                        <Eye className="w-4 h-4" />
                       )}
                     </Button>
                   </div>
@@ -112,11 +112,11 @@ export function LoginForm({
 
           <Button
             type="submit"
-            className="bg-blue-600 hover:bg-blue-700 h-12 w-full"
+            className="bg-blue-600 hover:bg-blue-700 w-full h-12"
             disabled={isPending}
           >
             <div className="flex items-center gap-2">
-              <LogIn className="h-4 w-4" />
+              <LogIn className="w-4 h-4" />
               Login
             </div>
           </Button>
