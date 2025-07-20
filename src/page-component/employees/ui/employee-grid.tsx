@@ -3,7 +3,7 @@ import {
   employeeNotifications,
   useDeleteEmployee,
 } from "@/entities/employee";
-import { CreateAccount } from "@/features/create-account";
+import { CreateAccount } from "@/features/employee/create-account";
 import { Badge } from "@/shared/ui/badge";
 import { Button } from "@/shared/ui/button";
 import { ConfirmDialog } from "@/shared/ui/confirm-dialog";

@@ -12,3 +12,7 @@ export function calculateDays(startDate: string, endDate: string): number {
 
   return daysDiff >= 0 ? daysDiff : 0;
 }
+
+export function formatDateEnUs(date: string): string {
+  return new Date(date).toLocaleDateString("en-Us");
+}

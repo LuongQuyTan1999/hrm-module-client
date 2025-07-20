@@ -13,8 +13,8 @@ import {
 import { useState } from "react";
 import { DepartmentsTab } from "./departments-tab";
 import { PositionsTab } from "./positions-tab";
-import { CreateDepartment } from "@/features/create-department";
-import { CreatePosition } from "@/features/create-position";
+import { CreateDepartment } from "@/features/department/create-department";
+import { CreatePosition } from "@/features/position/create-position";
 
 export function OrganizationPage() {
   const [activeTab, setActiveTab] = useState("departments");

@@ -1,9 +1,11 @@
 "use client";
 
 import {
+  PayrollPeriodSelect,
   PayrollRecord,
   PayrollStatus,
   useGetPayrolls,
+  usePayrollPeriods,
 } from "@/entities/payroll";
 import { formatCurrency } from "@/shared/lib/format-currency";
 import { Badge } from "@/shared/ui/badge";
@@ -27,15 +29,10 @@ import {
 } from "@/shared/ui/table";
 import {
   ColumnDef,
-  ColumnFiltersState,
   flexRender,
   getCoreRowModel,
-  getFilteredRowModel,
   getPaginationRowModel,
-  getSortedRowModel,
-  SortingState,
   useReactTable,
-  VisibilityState,
 } from "@tanstack/react-table";
 import {
   Ban,
@@ -46,7 +43,7 @@ import {
   Filter,
   Search,
 } from "lucide-react";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { PayrollDetailModal } from "./payroll-detail-modal";
 
 const getStatusBadge = (status: PayrollRecord["status"]) => {
@@ -196,12 +193,7 @@ const getColumns = (): ColumnDef<PayrollRecord>[] => {
               </Button>
             )}
 
-            <PayrollDetailModal
-              employeeId={record.employee.employeeCode}
-              employeeName={
-                record.employee.firstName + " " + record.employee.lastName
-              }
-            >
+            <PayrollDetailModal payrollId={record.id}>
               <Button
                 size="sm"
                 variant="outline"
@@ -228,41 +220,28 @@ export function PayrollTable() {
   const [searchTerm, setSearchTerm] = useState("");
   const [departmentFilter, setDepartmentFilter] = useState<string>("all");
   const [statusFilter, setStatusFilter] = useState<string>("all");
-  const [periodFilter, setPeriodFilter] = useState<string>("2025-01");
+  const { periods, selectedPeriod, setSelectedValue } = usePayrollPeriods();
 
-  // React Table states
-  const [sorting, setSorting] = useState<SortingState>([]);
-  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
-  const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
-  const [rowSelection, setRowSelection] = useState({});
+  const filters = useMemo(
+    () => ({
+      periodStart: selectedPeriod?.periodStart,
+      periodEnd: selectedPeriod?.periodEnd,
+    }),
+    [selectedPeriod]
+  );
 
-  const { data } = useGetPayrolls();
-  const payrolls = data?.items || [];
+  const { data } = useGetPayrolls(filters);
 
-  const columns = getColumns();
+  const payrolls = useMemo(() => data?.items || [], [data]);
+
+  const columns = useMemo(() => getColumns(), []);
 
   const table = useReactTable({
     data: payrolls,
     columns,
-    onSortingChange: setSorting,
-    onColumnFiltersChange: setColumnFilters,
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
-    getSortedRowModel: getSortedRowModel(),
-    getFilteredRowModel: getFilteredRowModel(),
-    onColumnVisibilityChange: setColumnVisibility,
-    onRowSelectionChange: setRowSelection,
-    initialState: {
-      pagination: {
-        pageSize: 10,
-      },
-    },
-    state: {
-      sorting,
-      columnFilters,
-      columnVisibility,
-      rowSelection,
-    },
+    manualFiltering: true,
   });
 
   const totalBasicSalary = payrolls.reduce(
@@ -300,16 +279,13 @@ export function PayrollTable() {
               />
             </div>
 
-            <Select value={periodFilter} onValueChange={setPeriodFilter}>
-              <SelectTrigger className="w-40">
-                <SelectValue placeholder="Pay Period" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="2025-01">January 2025</SelectItem>
-                <SelectItem value="2024-12">December 2024</SelectItem>
-                <SelectItem value="2024-11">November 2024</SelectItem>
-              </SelectContent>
-            </Select>
+            {selectedPeriod && (
+              <PayrollPeriodSelect
+                periods={periods}
+                selectedValue={selectedPeriod.value}
+                onValueChange={setSelectedValue}
+              />
+            )}
 
             <Select
               value={departmentFilter}

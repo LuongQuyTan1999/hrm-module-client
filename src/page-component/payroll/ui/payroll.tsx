@@ -7,6 +7,7 @@ import { useState } from "react";
 import { OverviewTab } from "./overview-tab";
 import { PayrollTable } from "./payroll-table";
 import { AdvanceRequestManagement } from "./advance-request-management";
+import { CreatePayrollDialog } from "@/features/payroll/create-payroll";
 
 export function PayrollPage() {
   const [activeTab, setActiveTab] = useState<
@@ -25,10 +26,12 @@ export function PayrollPage() {
           </p>
         </div>
 
-        <Button className="bg-blue-600 hover:bg-blue-700 px-6 h-10 text-white">
-          <Calculator className="mr-2 w-4 h-4" />
-          Calculate Payroll
-        </Button>
+        <CreatePayrollDialog>
+          <Button className="bg-blue-600 hover:bg-blue-700 px-6 h-10 text-white">
+            <Calculator className="mr-2 w-4 h-4" />
+            Calculate Payroll
+          </Button>
+        </CreatePayrollDialog>
       </div>
 
       {/* Quick Stats */}

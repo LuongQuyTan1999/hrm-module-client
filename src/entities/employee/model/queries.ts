@@ -54,7 +54,7 @@ export function useDeleteEmployee() {
 }
 
 export function useGetEmployees(
-  filters: EmployeeFilters,
+  filters?: EmployeeFilters,
   options?: Omit<
     UseQueryOptions<PaginatedResponse<Employee>, Error>,
     "queryKey" | "queryFn"

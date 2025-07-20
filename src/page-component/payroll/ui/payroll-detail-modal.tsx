@@ -1,5 +1,7 @@
 "use client";
 
+import { useGetPayroll } from "@/entities/payroll";
+import { formatDateEnUs } from "@/shared/lib/date";
 import { formatCurrency } from "@/shared/lib/format-currency";
 import { Badge } from "@/shared/ui/badge";
 import { Button } from "@/shared/ui/button";
@@ -22,121 +24,40 @@ import {
 import { useState } from "react";
 
 interface PayrollDetailModalProps {
-  employeeId: string;
-  employeeName: string;
+  payrollId: string;
   children: React.ReactNode;
   onEdit?: () => void;
 }
 
 export function PayrollDetailModal({
-  employeeId,
-  employeeName,
   onEdit,
   children,
+  payrollId,
 }: PayrollDetailModalProps) {
   const [open, setOpen] = useState(false);
 
-  // Mock detailed payroll data
-  const payrollDetails = {
-    id: employeeId,
-    month: "January, 2025",
-    period: "01/01/2025 - 31/01/2025",
-    status: "Paid",
-    paidDate: "2025-01-31",
-    generatedDate: "2025-01-30",
+  const { data: payrollDetails } = useGetPayroll(payrollId, { enabled: open });
 
-    // Employee info
-    employee: {
-      name: employeeName,
-      employeeId: employeeId,
-      position: "Senior Developer",
-      department: "Engineering",
-      level: "Senior",
-      joinDate: "2022-01-15",
-    },
+  const totalInsurance =
+    Number(payrollDetails?.unemploymentInsuranceEmployee) +
+      Number(payrollDetails?.healthInsuranceEmployee) +
+      Number(payrollDetails?.socialInsuranceEmployee) || 0;
 
-    // Company info
-    company: {
-      name: "ABC Technology Co., Ltd",
-      address: "123 Nguyen Hue, District 1, HCMC",
-      taxNumber: "0123456789",
-    },
+  // const totalTaxes = deductions?.personal_income_tax || 0;
 
-    // Work details
-    work: {
-      standardWorkingDays: 22,
-      actualWorkingDays: 20,
-      absentDays: 2,
-      leaveDays: 0,
-      holidayDays: 0,
-      overtimeHours: 8,
-      workingHours: 160,
-    },
+  const totalOthers =
+    Number(payrollDetails?.advanceAmount) +
+    Number(
+      payrollDetails?.details.filter(
+        (details) => details.componentType === "deduction"
+      )[0].amount
+    );
 
-    // Salary calculation
-    salary: {
-      baseSalary: 25000000,
-      dailyRate: 1136364, // baseSalary / standardWorkingDays
-      hourlyRate: 156250, // baseSalary / (standardWorkingDays * 8)
-      overtimeRate: 234375, // hourlyRate * 1.5
-    },
-
-    // Earnings breakdown
-    earnings: {
-      basicPay: 22727280, // dailyRate * actualWorkingDays
-      overtimePay: 1875000, // overtimeRate * overtimeHours
-      allowances: [
-        { name: "Lunch Allowance", amount: 500000, taxable: false },
-        { name: "Transport Allowance", amount: 200000, taxable: false },
-        { name: "Phone Allowance", amount: 100000, taxable: false },
-        { name: "Responsibility Allowance", amount: 1000000, taxable: true },
-      ],
-      bonuses: [
-        { name: "Monthly Performance Bonus", amount: 2000000, taxable: true },
-        { name: "Project Bonus", amount: 500000, taxable: true },
-      ],
-    },
-
-    // Deductions breakdown
-    deductions: {
-      taxes: [{ name: "Personal Income Tax", amount: 2930000, rate: 10 }],
-      insurance: [
-        { name: "Social Insurance (8%)", amount: 2000000, rate: 8 },
-        { name: "Health Insurance (1.5%)", amount: 375000, rate: 1.5 },
-        { name: "Unemployment Insurance (1%)", amount: 250000, rate: 1 },
-      ],
-      others: [{ name: "Union Fee", amount: 50000, rate: null }],
-    },
-
-    // Totals
-    totals: {
-      grossEarnings: 28702280,
-      taxableIncome: 26202280,
-      totalDeductions: 5605000,
-      netSalary: 23097280,
-    },
-  };
-
-  const totalAllowances = payrollDetails.earnings.allowances.reduce(
-    (sum, item) => sum + item.amount,
-    0
-  );
-  const totalBonuses = payrollDetails.earnings.bonuses.reduce(
-    (sum, item) => sum + item.amount,
-    0
-  );
-  const totalTaxes = payrollDetails.deductions.taxes.reduce(
-    (sum, item) => sum + item.amount,
-    0
-  );
-  const totalInsurance = payrollDetails.deductions.insurance.reduce(
-    (sum, item) => sum + item.amount,
-    0
-  );
-  const totalOthers = payrollDetails.deductions.others.reduce(
-    (sum, item) => sum + item.amount,
-    0
-  );
+  const totalEarnings =
+    Number(payrollDetails?.basicSalary) +
+    Number(payrollDetails?.overtimeSalary) +
+    Number(payrollDetails?.totalBonuses) +
+    Number(payrollDetails?.totalAllowances);
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -146,7 +67,7 @@ export function PayrollDetailModal({
           <div className="flex justify-between items-center">
             <DialogTitle className="flex items-center gap-2">
               <DollarSign className="w-5 h-5" />
-              Payroll Details - {payrollDetails.month}
+              Payroll Details - {payrollDetails?.payPeriodStart}
             </DialogTitle>
             <div className="flex gap-2">
               {onEdit && (
@@ -173,13 +94,11 @@ export function PayrollDetailModal({
                 Company Information
               </div>
               <div className="space-y-1 text-sm">
-                <div className="font-medium">{payrollDetails.company.name}</div>
+                <div className="font-medium">ABC Technology Co., Ltd</div>
                 <div className="text-gray-600">
-                  {payrollDetails.company.address}
+                  123 Nguyen Hue, District 1, HCMC
                 </div>
-                <div className="text-gray-600">
-                  Tax No: {payrollDetails.company.taxNumber}
-                </div>
+                <div className="text-gray-600">Tax No: 0123456789</div>
               </div>
             </div>
 
@@ -191,16 +110,17 @@ export function PayrollDetailModal({
               </div>
               <div className="space-y-1 text-sm">
                 <div className="font-medium">
-                  {payrollDetails.employee.name}
+                  {payrollDetails?.employee.firstName}{" "}
+                  {payrollDetails?.employee.lastName}
                 </div>
                 <div className="text-gray-600">
-                  Employee ID: {payrollDetails.employee.employeeId}
+                  Employee ID: {payrollDetails?.employee.employeeCode}
                 </div>
                 <div className="text-gray-600">
-                  {payrollDetails.employee.position}
+                  {payrollDetails?.employee.position.name}
                 </div>
                 <div className="text-gray-600">
-                  {payrollDetails.employee.department}
+                  {payrollDetails?.employee.department.name}
                 </div>
               </div>
             </div>
@@ -212,17 +132,19 @@ export function PayrollDetailModal({
               <div className="flex items-center gap-2">
                 <Calendar className="w-4 h-4 text-gray-500" />
                 <span className="text-sm">
-                  <strong>Pay Period:</strong> {payrollDetails.period}
+                  <strong>Pay Period:</strong>{" "}
+                  {formatDateEnUs(payrollDetails?.payPeriodStart || "")} -{" "}
+                  {formatDateEnUs(payrollDetails?.payPeriodEnd || "")}
                 </span>
               </div>
               <div className="text-sm">
                 <strong>Generated:</strong>{" "}
-                {new Date(payrollDetails.generatedDate).toLocaleDateString(
-                  "en-US"
-                )}
+                {formatDateEnUs(payrollDetails?.createdAt || "")}
               </div>
             </div>
-            <Badge className="bg-green-100 text-green-800">Paid</Badge>
+            <Badge className="bg-green-100 text-green-800">
+              {payrollDetails?.status}
+            </Badge>
           </div>
 
           {/* Working Days Summary */}
@@ -230,32 +152,32 @@ export function PayrollDetailModal({
             <h3 className="mb-3 font-semibold text-lg">
               Attendance Information
             </h3>
-            <div className="gap-4 grid grid-cols-2 md:grid-cols-4">
+            {/* <div className="gap-4 grid grid-cols-2 md:grid-cols-4">
               <div className="bg-blue-50 p-3 rounded-lg text-center">
                 <div className="font-semibold text-blue-700 text-lg">
-                  {payrollDetails.work.actualWorkingDays}
+                  {payrollDetails?.workingHours}
                 </div>
                 <div className="text-blue-600 text-xs">Working Days</div>
               </div>
               <div className="bg-red-50 p-3 rounded-lg text-center">
                 <div className="font-semibold text-red-700 text-lg">
-                  {payrollDetails.work.absentDays}
+                  {payrollDetails?.workingHours}
                 </div>
                 <div className="text-red-600 text-xs">Absent Days</div>
               </div>
               <div className="bg-purple-50 p-3 rounded-lg text-center">
                 <div className="font-semibold text-purple-700 text-lg">
-                  {payrollDetails.work.overtimeHours}
+                  {payrollDetails?.overtimeHours}
                 </div>
                 <div className="text-purple-600 text-xs">Overtime Hours</div>
               </div>
               <div className="bg-green-50 p-3 rounded-lg text-center">
                 <div className="font-semibold text-green-700 text-lg">
-                  {payrollDetails.work.workingHours}
+                  {payrollDetails?.workingHours}
                 </div>
                 <div className="text-green-600 text-xs">Total Hours</div>
               </div>
-            </div>
+            </div> */}
           </div>
 
           <Separator />
@@ -273,23 +195,15 @@ export function PayrollDetailModal({
                   <div className="flex justify-between items-center mb-2">
                     <span className="font-medium">Basic Salary</span>
                     <span className="font-semibold">
-                      {formatCurrency(payrollDetails.earnings.basicPay)}
+                      {formatCurrency(Number(payrollDetails?.basicSalary))}
                     </span>
                   </div>
-                  <div className="space-y-1 text-gray-600 text-xs">
+                  {/* <div className="space-y-1 text-gray-600 text-xs">
                     <div>
-                      Monthly Salary:{" "}
-                      {formatCurrency(payrollDetails.salary.baseSalary)}
+                      Working Days:{" "}
+                      {(Number(payrollDetails?.workingHours) / 8).toFixed()}/22
                     </div>
-                    <div>
-                      Working Days: {payrollDetails.work.actualWorkingDays}/
-                      {payrollDetails.work.standardWorkingDays}
-                    </div>
-                    <div>
-                      Daily Rate:{" "}
-                      {formatCurrency(payrollDetails.salary.dailyRate)}
-                    </div>
-                  </div>
+                  </div> */}
                 </div>
 
                 {/* Overtime */}
@@ -297,16 +211,16 @@ export function PayrollDetailModal({
                   <div className="flex justify-between items-center mb-2">
                     <span className="font-medium">Overtime Pay</span>
                     <span className="font-semibold">
-                      {formatCurrency(payrollDetails.earnings.overtimePay)}
+                      {formatCurrency(Number(payrollDetails?.overtimeSalary))}
                     </span>
                   </div>
-                  <div className="space-y-1 text-gray-600 text-xs">
-                    <div>Hours: {payrollDetails.work.overtimeHours} hours</div>
+                  {/* <div className="space-y-1 text-gray-600 text-xs">
+                    <div>Hours: {payrollDetails?.overtimeHours} hours</div>
                     <div>
-                      Rate: {formatCurrency(payrollDetails.salary.overtimeRate)}
+                      Rate: {formatCurrency(Number(payrollDetails?.dailyRate))}
                       /hour (x1.5)
                     </div>
-                  </div>
+                  </div> */}
                 </div>
 
                 {/* Allowances */}
@@ -314,23 +228,20 @@ export function PayrollDetailModal({
                   <div className="flex justify-between items-center mb-2">
                     <span className="font-medium">Allowances</span>
                     <span className="font-semibold">
-                      {formatCurrency(totalAllowances)}
+                      {formatCurrency(Number(payrollDetails?.totalAllowances))}
                     </span>
                   </div>
                   <div className="space-y-1">
-                    {payrollDetails.earnings.allowances.map(
-                      (allowance, index) => (
-                        <div
-                          key={index}
-                          className="flex justify-between text-xs"
-                        >
-                          <span className="text-gray-600">
-                            {allowance.name}:
+                    {payrollDetails?.details
+                      .filter((data) => data.componentType === "allowance")
+                      .map((item, idx) => (
+                        <div key={idx} className="flex justify-between text-xs">
+                          <span className="text-gray-600 capitalize">
+                            {item.componentName}:
                           </span>
-                          <span>{formatCurrency(allowance.amount)}</span>
+                          <span>{formatCurrency(Number(item.amount))}</span>
                         </div>
-                      )
-                    )}
+                      ))}
                   </div>
                 </div>
 
@@ -339,25 +250,27 @@ export function PayrollDetailModal({
                   <div className="flex justify-between items-center mb-2">
                     <span className="font-medium">Bonuses</span>
                     <span className="font-semibold">
-                      {formatCurrency(totalBonuses)}
+                      {formatCurrency(Number(payrollDetails?.totalBonuses))}
                     </span>
                   </div>
                   <div className="space-y-1">
-                    {payrollDetails.earnings.bonuses.map((bonus, index) => (
-                      <div key={index} className="flex justify-between text-xs">
-                        <span className="text-gray-600">{bonus.name}:</span>
-                        <span>{formatCurrency(bonus.amount)}</span>
-                      </div>
-                    ))}
+                    {payrollDetails?.details
+                      .filter((data) => data.componentType === "bonus")
+                      .map((item, idx) => (
+                        <div key={idx} className="flex justify-between text-xs">
+                          <span className="text-gray-600 capitalize">
+                            {item.componentName}:
+                          </span>
+                          <span>{formatCurrency(Number(item.amount))}</span>
+                        </div>
+                      ))}
                   </div>
                 </div>
 
                 <div className="bg-green-50 p-3 border border-green-200 rounded-lg">
                   <div className="flex justify-between items-center font-semibold text-green-700">
                     <span>Total Earnings:</span>
-                    <span>
-                      {formatCurrency(payrollDetails.totals.grossEarnings)}
-                    </span>
+                    <span>{formatCurrency(totalEarnings)}</span>
                   </div>
                 </div>
               </div>
@@ -374,23 +287,25 @@ export function PayrollDetailModal({
                   <div className="flex justify-between items-center mb-2">
                     <span className="font-medium">Taxes</span>
                     <span className="font-semibold text-red-600">
-                      -{formatCurrency(totalTaxes)}
+                      -{formatCurrency(Number(payrollDetails?.pit))}
                     </span>
                   </div>
                   <div className="space-y-1">
-                    {payrollDetails.deductions.taxes.map((tax, index) => (
-                      <div key={index} className="space-y-1 text-xs">
-                        <div className="flex justify-between">
-                          <span className="text-gray-600">{tax.name}:</span>
-                          <span>-{formatCurrency(tax.amount)}</span>
-                        </div>
-                        <div className="text-gray-500">
-                          Taxable income:{" "}
-                          {formatCurrency(payrollDetails.totals.taxableIncome)}{" "}
-                          × {tax.rate}%
-                        </div>
+                    <div className="space-y-1 text-xs">
+                      <div className="flex justify-between">
+                        <span className="text-gray-600">
+                          Personal Income Tax:
+                        </span>
+                        <span>
+                          -{formatCurrency(Number(payrollDetails?.pit))}
+                        </span>
                       </div>
-                    ))}
+                      {/* <div className="text-gray-500">
+                        Taxable income:{" "}
+                        {formatCurrency(Number(payrollDetails?.taxableIncome))}{" "}
+                        × 10%
+                      </div> */}
+                    </div>
                   </div>
                 </div>
 
@@ -399,23 +314,41 @@ export function PayrollDetailModal({
                   <div className="flex justify-between items-center mb-2">
                     <span className="font-medium">Insurance</span>
                     <span className="font-semibold text-red-600">
-                      -{formatCurrency(totalInsurance)}
+                      -{formatCurrency(Number(totalInsurance))}
                     </span>
                   </div>
                   <div className="space-y-1">
-                    {payrollDetails.deductions.insurance.map(
-                      (insurance, index) => (
-                        <div
-                          key={index}
-                          className="flex justify-between text-xs"
-                        >
-                          <span className="text-gray-600">
-                            {insurance.name}:
-                          </span>
-                          <span>-{formatCurrency(insurance.amount)}</span>
-                        </div>
-                      )
-                    )}
+                    <div className="flex justify-between text-xs">
+                      <span className="text-gray-600">Social insurance:</span>
+                      <span>
+                        -
+                        {formatCurrency(
+                          Number(payrollDetails?.socialInsuranceEmployee)
+                        )}
+                      </span>
+                    </div>
+
+                    <div className="flex justify-between text-xs">
+                      <span className="text-gray-600">Health insurance:</span>
+                      <span>
+                        -
+                        {formatCurrency(
+                          Number(payrollDetails?.healthInsuranceEmployee)
+                        )}
+                      </span>
+                    </div>
+
+                    <div className="flex justify-between text-xs">
+                      <span className="text-gray-600">
+                        Unemployment insurance:
+                      </span>
+                      <span>
+                        -
+                        {formatCurrency(
+                          Number(payrollDetails?.unemploymentInsuranceEmployee)
+                        )}
+                      </span>
+                    </div>
                   </div>
                 </div>
 
@@ -424,16 +357,30 @@ export function PayrollDetailModal({
                   <div className="flex justify-between items-center mb-2">
                     <span className="font-medium">Others</span>
                     <span className="font-semibold text-red-600">
-                      -{formatCurrency(totalOthers)}
+                      -{formatCurrency(Number(totalOthers))}
                     </span>
                   </div>
                   <div className="space-y-1">
-                    {payrollDetails.deductions.others.map((other, index) => (
-                      <div key={index} className="flex justify-between text-xs">
-                        <span className="text-gray-600">{other.name}:</span>
-                        <span>-{formatCurrency(other.amount)}</span>
-                      </div>
-                    ))}
+                    {payrollDetails?.details
+                      .filter(
+                        (details) => details.componentType === "deduction"
+                      )
+                      .map((item, idx) => (
+                        <div key={idx} className="flex justify-between text-xs">
+                          <span className="text-gray-600">
+                            {item.componentName}:
+                          </span>
+                          <span>
+                            -{formatCurrency(Number(item.amount || 0))}
+                          </span>
+                        </div>
+                      ))}
+                    <div className="flex justify-between text-xs">
+                      <span className="text-gray-600">Advance amount:</span>
+                      <span>
+                        -{formatCurrency(Number(payrollDetails?.advanceAmount))}
+                      </span>
+                    </div>
                   </div>
                 </div>
 
@@ -441,7 +388,7 @@ export function PayrollDetailModal({
                   <div className="flex justify-between items-center font-semibold text-red-700">
                     <span>Total Deductions:</span>
                     <span>
-                      -{formatCurrency(payrollDetails.totals.totalDeductions)}
+                      -{formatCurrency(Number(payrollDetails?.totalDeductions))}
                     </span>
                   </div>
                 </div>
@@ -455,11 +402,11 @@ export function PayrollDetailModal({
           <div className="bg-gradient-to-r from-green-50 to-emerald-50 py-6 rounded-lg text-center">
             <div className="mb-2 text-gray-600 text-sm">Net Salary</div>
             <div className="mb-2 font-bold text-green-700 text-4xl">
-              {formatCurrency(payrollDetails.totals.netSalary)}
+              {formatCurrency(Number(payrollDetails?.netSalary))}
             </div>
             <div className="text-green-600 text-sm">
               Transferred on{" "}
-              {new Date(payrollDetails.paidDate).toLocaleDateString("en-US")}
+              {/* {new Date(payrollDetails?.paidDate).toLocaleDateString("en-US")} */}
             </div>
           </div>
 

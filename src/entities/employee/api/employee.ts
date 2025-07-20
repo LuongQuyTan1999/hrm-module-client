@@ -9,7 +9,7 @@ import { PaginatedResponse } from "@/shared/types";
 
 export const employeeApi = {
   getAll: async (
-    filters: EmployeeFilters
+    filters?: EmployeeFilters
   ): Promise<PaginatedResponse<Employee>> => {
     return await apiClient.get("/employees", {
       params: filters,

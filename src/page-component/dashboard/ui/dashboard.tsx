@@ -1,4 +1,4 @@
-import { AddEmployee } from "@/features/add-employee";
+import { AddEmployee } from "@/features/employee/add-employee";
 import { KeyMetrics } from "./key-metrics";
 import { PendingAction } from "./pending-action";
 import { QuickStats } from "./quick-stats";

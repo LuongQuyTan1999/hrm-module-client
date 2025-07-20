@@ -32,7 +32,7 @@ import {
   useDeletePosition,
   useGetPositions,
 } from "@/entities/position";
-import { UpdatePosition } from "@/features/update-position";
+import { UpdatePosition } from "@/features/position/update-position";
 import { departmentNotifications } from "@/entities/department";
 import { ConfirmDialog } from "@/shared/ui/confirm-dialog";
 

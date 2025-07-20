@@ -3,7 +3,7 @@ import {
   useDeleteDepartment,
   useGetDepartments,
 } from "@/entities/department";
-import { UpdateDepartment } from "@/features/update-department";
+import { UpdateDepartment } from "@/features/department/update-department";
 import { Button } from "@/shared/ui/button";
 import { Card, CardContent } from "@/shared/ui/card";
 import { ConfirmDialog } from "@/shared/ui/confirm-dialog";

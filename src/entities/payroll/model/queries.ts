@@ -8,12 +8,29 @@ import {
 import {
   AdvanceRequest,
   AdvanceRequestsFilters,
+  CreatePayrollDto,
+  PayrollDetails,
   PayrollFilters,
   PayrollRecord,
   UpdateAdvanceRequests,
 } from "./types";
 import { payrollQueries } from "./query-keys";
 import { payrollApi } from "../api/payroll";
+
+export function useCreatePayrolls() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (body: CreatePayrollDto) => payrollApi.createPayrolls(body),
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({
+        queryKey: payrollQueries.lists(),
+      });
+
+      return data;
+    },
+  });
+}
 
 export function useGetPayrolls(
   filters?: PayrollFilters,
@@ -25,6 +42,17 @@ export function useGetPayrolls(
   return useQuery({
     queryKey: payrollQueries.list(filters),
     queryFn: () => payrollApi.getPayrolls(filters),
+    ...options,
+  });
+}
+
+export function useGetPayroll(
+  payrollId: string,
+  options?: Omit<UseQueryOptions<PayrollDetails, Error>, "queryKey" | "queryFn">
+) {
+  return useQuery({
+    queryKey: payrollQueries.detail(payrollId),
+    queryFn: () => payrollApi.getPayroll(payrollId),
     ...options,
   });
 }

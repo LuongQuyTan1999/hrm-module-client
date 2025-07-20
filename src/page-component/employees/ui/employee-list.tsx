@@ -32,7 +32,7 @@ import {
   TableRow,
 } from "@/shared/ui/table";
 import Link from "next/link";
-import { CreateAccount } from "@/features/create-account";
+import { CreateAccount } from "@/features/employee/create-account";
 import { ConfirmDialog } from "@/shared/ui/confirm-dialog";
 
 export const getColumns = (

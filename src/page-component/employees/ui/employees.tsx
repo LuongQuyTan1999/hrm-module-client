@@ -1,6 +1,6 @@
 "use client";
 import { useGetEmployees } from "@/entities/employee";
-import { AddEmployee } from "@/features/add-employee";
+import { AddEmployee } from "@/features/employee/add-employee";
 import { useState } from "react";
 import { employees } from "../model/mock-data";
 import { EmployeeGrid } from "./employee-grid";
@@ -22,10 +22,7 @@ export function EmployeesPage() {
     return matchesSearch && matchesDepartment;
   });
 
-  const { data, isLoading } = useGetEmployees({
-    page: 1,
-    limit: 10,
-  });
+  const { data, isLoading } = useGetEmployees();
 
   return (
     <div className="space-y-6">
